@@ -11,7 +11,7 @@ Potential features include (but are not limited to):
 ## Team Info
 **Team Name:** Femininomenon
 
-**Team Members:** &nbsp;Grace Anderson (grace.j.anderson@wsu.edu, WSU ID: )  
+**Team Members:** &nbsp;Grace Anderson (grace.j.anderson@wsu.edu, WSU ID: 11759304)  
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; Matthew Pham (dung.m.pham@wsu.edu, WSU ID: 11767705)  
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; Briana Weik (briana.weik@wsu.edu, WSU ID: 11774621)
                 
