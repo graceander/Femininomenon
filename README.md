@@ -8,7 +8,9 @@ Potential features include (but are not limited to):
 ------------------------
 ## Team Info
 Team Name: Femininomenon
+
 Team Members: Grace Anderson (grace.j.anderson@wsu.edu, WSU ID: )
               Matthew Pham (dung.m.pham@wsu.edu, WSU ID: 11767705)
               Briana Weik (briana.weik@wsu.edu, WSU ID: 11774621)
+              
 Project Repository: https://github.com/graceander/Femininomenon
