@@ -1,11 +1,12 @@
 # Femininomenon
 ------------------------
 ## Project Description
-A personal budgeting app to track and store user's expenses and financial allotments. 
+A personal budgeting app to track and store user's expenses and financial allotments, heavily themed and inspired by new pop sensation Chappell Roan. 
 
 Potential features include (but are not limited to):
 * Purchase Rounding - custom setting that allows users to round up their purchases to the next whole dollar and allocate the change to their choice of savings, donations, investments, etc.
 * Subscription Management - remind users of regular subscription services they are enrolled in to identify potential opportunities to save money
+
 ------------------------
 ## Team Info
 **Team Name:** Femininomenon
