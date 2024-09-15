@@ -1,4 +1,4 @@
-package org.cpts422.Femininomenon.App.Entity;
+package org.cpts422.Femininomenon.App.Models;
 
 
 import jakarta.persistence.*;
@@ -7,13 +7,16 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users_table")
-public class UserEntity {
+public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String login;
     String password;
     String email;
+
+
+
 
     public Integer getId() {
         return id;
@@ -53,7 +56,7 @@ public class UserEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
+        UserModel that = (UserModel) o;
         return Objects.equals(id, that.id) && Objects.equals(login, that.login) && Objects.equals(password, that.password) && Objects.equals(email, that.email);
     }
 
@@ -68,7 +71,6 @@ public class UserEntity {
         return "UserEntity{" +
                 "Email='" + email + '\'' +
                 ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
                 ", id=" + id +
                 '}';
     }
