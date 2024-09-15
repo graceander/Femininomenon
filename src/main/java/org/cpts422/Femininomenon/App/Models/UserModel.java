@@ -14,6 +14,8 @@ public class UserModel {
     String login;
     String password;
     String email;
+    String firstName;
+    String lastName;
 
 
 
@@ -50,28 +52,53 @@ public class UserModel {
         this.email = email;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
 
+
+    // Equals and HashCode methods
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserModel that = (UserModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(login, that.login) && Objects.equals(password, that.password) && Objects.equals(email, that.email);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(login, that.login) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, email);
+        return Objects.hash(id, login, password, email, firstName, lastName);
     }
 
-    // the password is not to string method since we need to keep it safe
+    // The password is not included in the toString method to keep it safe
     @Override
     public String toString() {
         return "UserEntity{" +
                 "Email='" + email + '\'' +
                 ", login='" + login + '\'' +
                 ", id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 '}';
     }
+
 }

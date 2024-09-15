@@ -24,14 +24,21 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute UserModel userModel) {
-        UserModel registerNew = usersService.registerUser(userModel.getLogin(), userModel.getPassword(), userModel.getEmail());
+        // Pass firstName and lastName to the service method
+        UserModel registerNew = usersService.registerUser(
+                userModel.getFirstName(),
+                userModel.getLastName(),
+                userModel.getLogin(),
+                userModel.getPassword(),
+                userModel.getEmail()
+        );
+
         if (registerNew == null) {
             return "error";
         } else {
             return "redirect:/";
         }
     }
-
     @RequestMapping("/")
     public String index(Model model) {
         model.addAttribute("loginRequest", new UserModel());
