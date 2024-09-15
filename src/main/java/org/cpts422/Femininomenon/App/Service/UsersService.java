@@ -13,6 +13,7 @@ public class UsersService {
         this.userRepository = userRepository;
     }
 
+    // Add firstName and lastName to the registerUser method
     public UserModel registerUser(String firstName, String lastName, String login, String password, String email) {
         if (login != null && password != null) {
             UserModel usersModel = new UserModel();
@@ -30,7 +31,8 @@ public class UsersService {
     }
 
 
-    public UserModel authenticateUser(String login, String password) {
+
+        public UserModel authenticateUser(String login, String password) {
         return userRepository.findByLoginAndPassword(login, password).orElse(null);
     }
 
