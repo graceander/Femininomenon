@@ -14,17 +14,14 @@ public class UserController {
         this.usersService = usersService;
     }
 
-
     @GetMapping("/register")
-    public String getRegisterPage(Model model){
+    public String getRegisterPage(Model model) {
         model.addAttribute("registerRequest", new UserModel());
-
         return "register";
     }
 
     @PostMapping("/register")
     public String register(@ModelAttribute UserModel userModel) {
-        // Pass firstName and lastName to the service method
         UserModel registerNew = usersService.registerUser(
                 userModel.getFirstName(),
                 userModel.getLastName(),
@@ -39,36 +36,28 @@ public class UserController {
             return "redirect:/";
         }
     }
+
     @RequestMapping("/")
     public String index(Model model) {
         model.addAttribute("loginRequest", new UserModel());
         return "index";
     }
+
     @PostMapping("/login")
     public String login(@ModelAttribute UserModel userModel) {
         System.out.println("login request: " + userModel);
         UserModel authenticateTheUser = usersService.authenticateUser(userModel.getLogin(), userModel.getPassword());
         System.out.println(authenticateTheUser);
-        if(authenticateTheUser == null) {
+        if (authenticateTheUser == null) {
             System.out.println("Error");
             return "error";
         } else {
             System.out.println("Login successful, redirecting to home.");
-            return "redirect:/home"; // Or another page for testing
+            return "redirect:/home?login=" + userModel.getLogin();
+
+
         }
     }
-
-    @GetMapping("/home")
-    public String homePage(Model model) {
-        return "home";
-    }
-
-
-
-
-
-
-
 
 
 }

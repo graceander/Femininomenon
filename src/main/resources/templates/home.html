@@ -5,9 +5,38 @@
     <title>MORE AND MORE CATS</title>
 </head>
 <body>
+<h2>WELCOME TO FEMININOM <span th:text="${user.login}"></span></h2>
 <div>
-  <img src= "/more cats.jpg" alt="A cute cat" width="1200" height="800">
+    <img src="/more cats.jpg" alt="A cute cat" width="1200" height="800">
 </div>
-
+<h3>Your Transaction</h3>
+<form action="/addTransaction" method="get">
+    <input type="hidden" name="login" th:value="${user.login}">
+    <button type="submit">Add Transaction</button>
+</form>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Account</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transaction : ${transactions}">
+        <td th:text="${transaction.id}">ID</td>
+        <td th:text="${transaction.date}">Date</td>
+        <td th:text="${transaction.amount}">Amount</td>
+        <td th:text="${transaction.category}">Category</td>
+        <td th:text="${transaction.description}">Description</td>
+        <td th:text="${transaction.type}">Type</td>
+        <td th:text="${transaction.account}">Account</td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

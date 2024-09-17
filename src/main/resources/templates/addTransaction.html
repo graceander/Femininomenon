@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Transaction NOW</title>
+</head>
+<body>
+<h1>just add a new Transaction</h1>
+
+<form action="/submitTransaction" method="post">
+  <input type="hidden" name="login" th:value="${user.login}"/>
+
+  <label for="amount">Amount:</label>
+  <input type="number" id="amount" name="amount" step="0.01" required/><br>
+
+
+  <label for="category">Category:</label>
+  <select id="category" name="category" required>
+
+    <option value="Groceries">Groceries</option>
+    <option value="Utilities">Utilities</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Transportation">Transportation</option>\
+    <option value="Housing">Housing</option>
+    <option value="Other">Other</option>
+  </select><br>
+
+
+
+  <label for="description">Description:</label>
+  <input type="text" id="description" name="description" required/><br>
+
+  <label for="type">Type:</label>
+  <select id="type" name="type" required>
+    <option value="INCOME">Income</option>
+    <option value="EXPENSE">Expense</option>
+  </select><br>
+
+  <label for="account">Account:</label>
+  <select id="account" name="account" required>
+    <option value="Checking">Checking</option>
+    <option value="Saving">Saving</option>
+  </select><br>
+
+  <button type="submit">Add Transaction</button>
+</form>
+</body>
+</html>

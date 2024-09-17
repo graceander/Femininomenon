@@ -18,8 +18,6 @@ public class UserModel {
     String lastName;
 
 
-
-
     public Integer getId() {
         return id;
     }
