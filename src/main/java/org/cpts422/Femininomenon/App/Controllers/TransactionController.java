@@ -24,6 +24,7 @@ public class TransactionController {
     }
 
 
+
     @GetMapping("/home")
     public String homePage(String login, Model model) {
         UserModel user = usersService.findByLogin(login);
@@ -43,7 +44,7 @@ public class TransactionController {
     }
 
     @GetMapping("/addTransaction")
-    public String getAddTransactionPage( String login, Model model) {
+    public String AddTransactionPage( String login, Model model) {
         UserModel user = usersService.findByLogin(login);
         if (user == null) {
             model.addAttribute("error", "User not found");
@@ -65,6 +66,18 @@ public class TransactionController {
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
     }
+    /*
+    @PostMapping("/removeTransaction")
+    public String removeTransaction(String login, float amount, String category,  String description,  TransactionModel.TransactionType type,  String account) {
+        UserModel user = usersService.findByLogin(login);
+        if(user == null) {
+            return "error";
+        }
+        return "redirect:/home?login=" + login;
+
+    }
+    */
+
 
 
 }

@@ -1,5 +1,6 @@
 package org.cpts422.Femininomenon.App.Setup;
-
+import java.io.*;
+import java.util.Scanner;
 import jakarta.annotation.PostConstruct;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
@@ -31,9 +32,16 @@ public class SetupUsers {
         UserModel userBriana = usersService.registerUser("Briana", "Briana", "briana", "briana", "Cow@gmail.com");
 
         System.out.println("All the users are registered.");
+        addTransaction(userMatthew);
+        addTransaction(userGrace);
+        addTransaction(userBriana);
 
+    }
+    // this is incomplete I will implement a function where it will read the csv file for the transactions
+    public void addTransaction(UserModel user) {
 
-
+        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), 169, "Groceries", "Target", TransactionModel.TransactionType.INCOME, "Checking");
+        transactionService.saveTransaction(newTransaction);
     }
 
 
