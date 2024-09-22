@@ -1,5 +1,6 @@
 package org.cpts422.Femininomenon.App.Setup;
 import java.io.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import jakarta.annotation.PostConstruct;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
@@ -32,17 +33,38 @@ public class SetupUsers {
         UserModel userBriana = usersService.registerUser("Briana", "Briana", "briana", "briana", "Cow@gmail.com");
 
         System.out.println("All the users are registered.");
-        addTransaction(userMatthew);
-        addTransaction(userGrace);
-        addTransaction(userBriana);
+        addTransactionsToUser(userMatthew);
+        addTransactionsToUser(userGrace);
+        addTransactionsToUser(userBriana);
 
     }
-    // this is incomplete I will implement a function where it will read the csv file for the transactions
-    public void addTransaction(UserModel user) {
 
-        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), 169, "Groceries", "Target", TransactionModel.TransactionType.INCOME, "Checking");
-        transactionService.saveTransaction(newTransaction);
+    public void addTransactionsToUser(UserModel user) {
+        String line;
+        String splitSep = ",";
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+        try {
+            File file = new File("src/main/java/org/cpts422/Femininomenon/App/Setup/Transaction1.csv");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            //skip the header of the csv
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] transactionData = line.split(splitSep);
+                LocalDateTime date = LocalDateTime.parse(transactionData[2], formatter);
+                float amount = Float.parseFloat(transactionData[3]);
+                String category = transactionData[4];
+                String description = transactionData[5];
+                TransactionModel.TransactionType type = TransactionModel.TransactionType.valueOf(transactionData[6].toUpperCase());
+                String account = transactionData[7];
+
+                TransactionModel newTransaction = new TransactionModel(user, date, amount, category, description, type, account);
+                transactionService.saveTransaction(newTransaction);
+            }
+            System.out.println("Transactions successfully loaded for all users");
+        } catch (IOException e) {
+            System.out.println("Error loading transactions: " + e.getMessage());
+        }
     }
-
 
 }
