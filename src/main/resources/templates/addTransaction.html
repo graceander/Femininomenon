@@ -4,7 +4,11 @@
   <title>Add Transaction NOW</title>
 </head>
 <body>
-<h1>just add a new Transaction</h1>
+<h1>MEOWWW a new Transaction?</h1>
+<div>
+  <img src="/staring.jpg" alt="A cute cat" width="500" height="650">
+
+</div>
 
 <form action="/submitTransaction" method="post">
   <input type="hidden" name="login" th:value="${user.login}"/>
@@ -42,6 +46,12 @@
   </select><br>
 
   <button type="submit">Add Transaction</button>
+</form>
+<br>
+</br>
+<form action="/goHome" method="get">
+  <input type="hidden" name="login" th:value="${user.login}">
+  <button type="submit">Go Home</button>
 </form>
 </body>
 </html>

@@ -22,7 +22,10 @@ public class TransactionController {
         this.transactionService = transactionService;
         this.usersService = usersService;
     }
-
+    @GetMapping("/goHome")
+    public String goHome(@RequestParam("login") String login, Model model) {
+        return "redirect:/home?login=" + login;
+    }
 
 
     @GetMapping("/home")
@@ -66,14 +69,7 @@ public class TransactionController {
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
     }
-    @PostMapping("/deleteTransaction")
-    public String deleteTransaction( Long id, String login) {
-        TransactionModel transaction = transactionService.getTransactionById(id);
-        if (transaction != null && transaction.getUser().getLogin().equals(login)) {
-            transactionService.removeTransaction(transaction);
-        }
-        return "redirect:/home?login=" + login;
-    }
+
 
     @GetMapping("/editTransaction")
     public String editTransactionPage(Long id, String login, Model model) {
@@ -91,6 +87,37 @@ public class TransactionController {
         model.addAttribute("user", user);
         return "editTransaction";
     }
+
+    @PostMapping("/deleteTransaction")
+    public String deleteTransaction( Long id, String login) {
+        TransactionModel transaction = transactionService.getTransactionById(id);
+        if (transaction != null && transaction.getUser().getLogin().equals(login)) {
+            transactionService.removeTransaction(transaction);
+        }
+        return "redirect:/home?login=" + login;
+    }
+
+    @PostMapping("/updateTransaction")
+    public String updateTransaction( Long id, String login,  String date, float amount,  String category, String description,  TransactionModel.TransactionType type, String account, Model model) {
+
+        // get the transaction ID
+        TransactionModel transaction = transactionService.getTransactionById(id);
+        if (transaction == null || !transaction.getUser().getLogin().equals(login)) {
+            model.addAttribute("error", "Transaction noes not belong to the user");
+            return "error";
+        }
+
+        transaction.setDate(LocalDateTime.parse(date));
+        transaction.setAmount(amount);
+        transaction.setCategory(category);
+        transaction.setDescription(description);
+        transaction.setType(type);
+        transaction.setAccount(account);
+        transactionService.saveTransaction(transaction);
+
+        return "redirect:/home?login=" + login;
+    }
+
 
 
 
