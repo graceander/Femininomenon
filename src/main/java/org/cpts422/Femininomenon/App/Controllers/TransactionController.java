@@ -66,17 +66,33 @@ public class TransactionController {
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
     }
-    /*
-    @PostMapping("/removeTransaction")
-    public String removeTransaction(String login, float amount, String category,  String description,  TransactionModel.TransactionType type,  String account) {
-        UserModel user = usersService.findByLogin(login);
-        if(user == null) {
-            return "error";
+    @PostMapping("/deleteTransaction")
+    public String deleteTransaction( Long id, String login) {
+        TransactionModel transaction = transactionService.getTransactionById(id);
+        if (transaction != null && transaction.getUser().getLogin().equals(login)) {
+            transactionService.removeTransaction(transaction);
         }
         return "redirect:/home?login=" + login;
-
     }
-    */
+
+    @GetMapping("/editTransaction")
+    public String editTransactionPage(Long id, String login, Model model) {
+        UserModel user = usersService.findByLogin(login);
+        if (user == null) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+        TransactionModel transaction = transactionService.getTransactionById(id);
+        if (transaction == null || !transaction.getUser().getId().equals(user.getId())) {
+            model.addAttribute("error", "Transaction does not belong to the user");
+            return "error";
+        }
+        model.addAttribute("transaction", transaction);
+        model.addAttribute("user", user);
+        return "editTransaction";
+    }
+
+
 
 
 

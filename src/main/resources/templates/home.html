@@ -40,10 +40,16 @@
         <td th:text="${transaction.type}">Type</td>
         <td th:text="${transaction.account}">Account</td>
         <td>
-            <!-- Link to action page -->
-            <a href="/transactionActions?id=${transaction.id}&login=${user.login}">⫶</a>
+            <!-- Link to Edit Transaction page -->
+            <form action="/editTransaction" method="get">
+                <input type="hidden" name="id" th:value="${transaction.id}">
+                <input type="hidden" name="login" th:value="${user.login}">
+                <button type="submit">⫶</button>
+            </form>
         </td>
     </tr>
+
+
     </tbody>
 </table>
 
