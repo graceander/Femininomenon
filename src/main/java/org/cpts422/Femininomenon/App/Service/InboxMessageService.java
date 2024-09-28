@@ -14,7 +14,7 @@ import java.util.List;
 public class InboxMessageService {
 
     private final InboxMessageRepository inboxMessageRepository;
-    private final TransactionRepository transactionRepository; // Ensure you have this repository
+    private final TransactionRepository transactionRepository;
 
     @Autowired
     public InboxMessageService(InboxMessageRepository inboxMessageRepository, TransactionRepository transactionRepository) {
