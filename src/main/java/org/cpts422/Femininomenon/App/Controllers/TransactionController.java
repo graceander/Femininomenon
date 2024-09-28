@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class TransactionController {
@@ -42,7 +43,19 @@ public class TransactionController {
         } else {
             model.addAttribute("transactions", transactions);
         }
+
+        // Add spending data for the chart
+        LocalDateTime now = LocalDateTime.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        float totalSpending = transactionService.getTotalSpendingForMonth(login, currentYear, currentMonth);
+        Map<String, Float> spendingByCategory = transactionService.getSpendingByCategory(login, currentYear, currentMonth);
+
+        model.addAttribute("totalSpending", totalSpending);
+        model.addAttribute("spendingByCategory", spendingByCategory);
         model.addAttribute("user", user);
+
         return "home";
     }
 

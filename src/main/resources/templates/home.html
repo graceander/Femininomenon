@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>FEMININOM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <h2>WELCOME TO FEMININOMENON, <span th:text="${user.login}"></span></h2>
 
 <div>
     <img src="/more cats.jpg" alt="A cute cat" width="1200" height="800">
+</div>
+
+<h3>Spending Overview</h3>
+<p>Total Spending: $<span th:text="${#numbers.formatDecimal(totalSpending, 1, 2)}"></span></p>
+
+<div th:if="${totalSpending == 0}">No expenses logged for this month.</div>
+<div th:unless="${totalSpending == 0}" style="width: 50%; margin: auto;">
+    <canvas id="spendingChart"></canvas>
 </div>
 
 <h3>Your Transactions</h3>
@@ -48,10 +57,40 @@
             </form>
         </td>
     </tr>
-
-
     </tbody>
 </table>
+
+<script th:inline="javascript">
+    var ctx = document.getElementById('spendingChart').getContext('2d');
+    var spendingData = /*[[${spendingByCategory}]]*/ {};
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(spendingData),
+            datasets: [{
+                data: Object.values(spendingData),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Spending by Category'
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
