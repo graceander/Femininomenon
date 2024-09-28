@@ -5,7 +5,9 @@ import org.cpts422.Femininomenon.App.Repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -35,6 +37,33 @@ public class TransactionService {
         return transaction.orElse(null);
     }
 
+    public float getTotalSpendingForMonth(String login, int year, int month) {
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
 
+        return getTransactionsByUser(login).stream()
+                .filter(t -> t.getDate().isAfter(startOfMonth) && t.getDate().isBefore(endOfMonth))
+                .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
+                .map(TransactionModel::getAmount)
+                .reduce(0f, Float::sum);
+    }
+
+    public Map<String, Float> getSpendingByCategory(String login, int year, int month) {
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
+
+        return getTransactionsByUser(login).stream()
+                .filter(t -> t.getDate().isAfter(startOfMonth) && t.getDate().isBefore(endOfMonth))
+                .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
+                .collect(Collectors.groupingBy(
+                        t -> t.getCategory().name(), // Convert enum to String
+                        Collectors.summingDouble(TransactionModel::getAmount)
+                ))
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().floatValue()
+                ));
+    }
 }
 
