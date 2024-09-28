@@ -66,9 +66,12 @@ public class ScheduledTransactionService {
             newTransactionType = TransactionModel.TransactionType.EXPENSE;
         }
 
+        LocalDateTime adjustedPaymentDate = BankHolidays.adjustForBankClosures(scheduledTransaction.getRecentPayment());
+
+
         TransactionModel newTransaction = new TransactionModel(
                 scheduledTransaction.getUser(),
-                scheduledTransaction.getRecentPayment(),
+                adjustedPaymentDate,
                 scheduledTransaction.getAmount(),
                 scheduledTransaction.getCategory(),
                 scheduledTransaction.getDescription(),
