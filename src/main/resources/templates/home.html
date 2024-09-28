@@ -25,7 +25,14 @@
     <input type="hidden" name="login" th:value="${user.login}">
     <button type="submit">Add Transaction</button>
 </form>
-
+<form action="/user/rules/view" method="get">
+    <input type="hidden" name="userLogin" th:value="${user.login}">
+    <button type="submit">add Rules</button>
+</form>
+<form action="/user/inbox/view" method="get">
+    <input type="hidden" name="userLogin" th:value="${user.login}">
+    <button type="submit">View Inbox</button>
+</form>
 <table border="1">
     <thead>
     <tr>

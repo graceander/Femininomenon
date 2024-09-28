@@ -43,7 +43,10 @@
 <body>
 
 <h2>User Spending Rules for: <span th:text="${userLogin}"></span></h2>
-
+<form action="/goHome" method="get">
+  <input type="hidden" name="login" th:value="${userLogin}">
+  <button type="submit">Go Home</button>
+</form>
 
 <button id="addRuleBtn">Add Rule</button>
 
@@ -77,7 +80,7 @@
     <form id="addRuleForm" action="/user/rules/add" method="post">
       <input type="hidden" name="userLogin" th:value="${userLogin}">
 
-      <label for="category">Category (optional):</label>
+      <label for="category">Category:</label>
       <select name="category">
         <option value="" disabled selected>Select a category</option>
         <option value="GROCERIES">GROCERIES</option>

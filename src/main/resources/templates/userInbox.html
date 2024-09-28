@@ -2,9 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Inbox</title>
 </head>
 <body>
 
+<h2>Inbox for: <span th:text="${userLogin}"></span></h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Message</th>
+        <th>Timestamp</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="message : ${messages}">
+        <td th:text="${message.message}"></td>
+        <td th:text="${#dates.format(message.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${message.isRead ? 'Read' : 'Unread'}"></td>
+    </tr>
+    </tbody>
+</table>
+<form action="/goHome" method="get">
+    <input type="hidden" name="login" th:value="${userLogin}">
+    <button type="submit">Go Home</button>
+</form>
 </body>
 </html>

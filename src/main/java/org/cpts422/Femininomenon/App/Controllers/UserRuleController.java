@@ -39,6 +39,10 @@ public class UserRuleController {
         }
         return "redirect:/user/rules/view?userLogin=" + userLogin;
     }
+    @GetMapping("/goHome")
+    public String goHome(@RequestParam("login") String login, Model model) {
+        return "redirect:/home?login=" + login;
+    }
 
 }
 
