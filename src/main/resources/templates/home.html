@@ -16,6 +16,10 @@
     <input type="hidden" name="login" th:value="${user.login}">
     <button type="submit">Add Transaction</button>
 </form>
+<form action="/addScheduledTransaction" method="get">
+    <input type="hidden" name="login" th:value="${user.login}">
+    <button type="submit">Add Scheduled Transaction</button>
+</form>
 
 <table border="1">
     <thead>
