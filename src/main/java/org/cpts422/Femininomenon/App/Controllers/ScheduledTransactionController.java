@@ -19,39 +19,33 @@ import java.util.List;
 public class ScheduledTransactionController {
 
     private final ScheduledTransactionService scheduledTransactionService;
-//    private final TransactionService transactionService;
     private final UsersService usersService;
     private final TransactionService transactionService;
 
     public ScheduledTransactionController(ScheduledTransactionService scheduledTransactionService, UsersService usersService, TransactionService transactionService) {
         this.scheduledTransactionService = scheduledTransactionService;
-        // this.transactionService = transactionService;
         this.usersService = usersService;
         this.transactionService = transactionService;
     }
-//    @GetMapping("/goHome")
-//    public String goHome(@RequestParam("login") String login, Model model) {
-//        return "redirect:/home?login=" + login;
-//    }
 
+    @GetMapping("/viewScheduledTransactions")
+    public String ViewScheduledTransactionsPage( String login, Model model) {
+        UserModel user = usersService.findByLogin(login);
+        if (user == null) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+        model.addAttribute("user", user);
+        List<ScheduledTransactionModel> scheduledTransactions = scheduledTransactionService.getTransactionsByUser(user.getLogin());
 
-//    @GetMapping("/home")
-//    public String homePage(String login, Model model) {
-//        UserModel user = usersService.findByLogin(login);
-//        if (user == null) {
-//            model.addAttribute("error", "User not found");
-//            return "error";
-//        }
-//        List<TransactionModel> transactions = transactionService.getTransactionsByUser(user.getLogin());
-//
-//        if (transactions == null || transactions.isEmpty()) {
-//            model.addAttribute("message", "No transactions found for this user.");
-//        } else {
-//            model.addAttribute("transactions", transactions);
-//        }
-//        model.addAttribute("user", user);
-//        return "home";
-//    }
+        if (scheduledTransactions == null || scheduledTransactions.isEmpty()) {
+            model.addAttribute("message", "No scheduled transactions found for this user.");
+        } else {
+            model.addAttribute("scheduledTransactions", scheduledTransactions);
+        }
+        model.addAttribute("user", user);
+        return "viewScheduledTransactions";
+    }
 
     @GetMapping("/addScheduledTransaction")
     public String AddScheduledTransactionPage( String login, Model model) {
@@ -85,7 +79,7 @@ public class ScheduledTransactionController {
         scheduledTransactionService.saveTransaction(newScheduledTransaction);
         TransactionModel initialTransaction = scheduledTransactionService.onCreateScheduledTransaction(newScheduledTransaction);
         transactionService.saveTransaction(initialTransaction);
-        return "redirect:/home?login=" + login;
+        return "redirect:/viewScheduledTransactions?login=" + login;
     }
 
 
@@ -112,7 +106,7 @@ public class ScheduledTransactionController {
         if (scheduledTransaction != null && scheduledTransaction.getUser().getLogin().equals(login)) {
             scheduledTransactionService.removeTransaction(scheduledTransaction);
         }
-        return "redirect:/home?login=" + login;
+        return "redirect:/viewScheduledTransactions?login=" + login;
     }
 
     @PostMapping("/updateScheduledTransaction")
@@ -133,7 +127,7 @@ public class ScheduledTransactionController {
         scheduledTransaction.setAccount(account);
         scheduledTransactionService.saveTransaction(scheduledTransaction);
 
-        return "redirect:/home?login=" + login;
+        return "redirect:/viewScheduledTransactions?login=" + login;
     }
 
 
