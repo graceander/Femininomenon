@@ -1,5 +1,6 @@
 package org.cpts422.Femininomenon.App.Service;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
+import org.cpts422.Femininomenon.App.Models.UserRuleModel;
 import org.cpts422.Femininomenon.App.Repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -33,5 +34,7 @@ public class TransactionService {
         Optional<TransactionModel> transaction = transactionRepository.findById(id);
         return transaction.orElse(null);
     }
+
+
 }
 

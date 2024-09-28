@@ -1,18 +1,14 @@
 package org.cpts422.Femininomenon.App.Setup;
 import java.io.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 import jakarta.annotation.PostConstruct;
-import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Service.TransactionService;
 import org.cpts422.Femininomenon.App.Service.UsersService;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Random;
+
 
 @Component
 public class SetupUsers {
@@ -32,10 +28,11 @@ public class SetupUsers {
         UserModel userGrace = usersService.registerUser("Grace", "Anderson", "grace", "grace", "Cats@gmail.com");
         UserModel userBriana = usersService.registerUser("Briana", "Briana", "briana", "briana", "Cow@gmail.com");
 
-        System.out.println("All the users are registered.");
+
         addTransactionsToUser(userMatthew);
         addTransactionsToUser(userGrace);
         addTransactionsToUser(userBriana);
+        System.out.println("All the users are registered.");
 
     }
 
@@ -53,7 +50,14 @@ public class SetupUsers {
                 String[] transactionData = line.split(splitSep);
                 LocalDateTime date = LocalDateTime.parse(transactionData[2], formatter);
                 float amount = Float.parseFloat(transactionData[3]);
-                String category = transactionData[4];
+                String categoryStr = transactionData[4].toUpperCase().replace(" ", "_");
+                TransactionModel.CategoryType category;
+                try {
+                    category = TransactionModel.CategoryType.valueOf(categoryStr);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Unknown category: " + categoryStr);
+                    continue;
+                }
                 String description = transactionData[5];
                 TransactionModel.TransactionType type = TransactionModel.TransactionType.valueOf(transactionData[6].toUpperCase());
                 String account = transactionData[7];
@@ -65,6 +69,15 @@ public class SetupUsers {
         } catch (IOException e) {
             System.out.println("Error loading transactions: " + e.getMessage());
         }
+
+        // add alerts and spending rules
+        // enterainment exceed
+
+        // create inbox
+        // complex spedning rules.
+        // for for any month should not be less than the amount than i spent on groceries
+
+
     }
 
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>FEMININOM</title>
@@ -16,6 +16,12 @@
     <input type="hidden" name="login" th:value="${user.login}">
     <button type="submit">Add Transaction</button>
 </form>
+<form action="/user/rules/view" method="get">
+    <input type="hidden" name="userLogin" th:value="${user.login}">
+    <button type="submit">Add Rule</button>
+</form>
+
+
 
 <table border="1">
     <thead>

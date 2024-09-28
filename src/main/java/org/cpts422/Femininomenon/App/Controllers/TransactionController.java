@@ -65,7 +65,16 @@ public class TransactionController {
         {
             return "error";
         }
-        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, category, description, type, account);
+
+        TransactionModel.CategoryType categoryType;
+        try {
+            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            System.out.println("Invalid category: " + category);
+            return "error";
+        }
+        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, categoryType, description, type, account);
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
     }
@@ -107,9 +116,18 @@ public class TransactionController {
             return "error";
         }
 
+        TransactionModel.CategoryType categoryType;
+        try {
+            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            model.addAttribute("error", "Invalid category: " + category);
+            return "error";
+        }
+
         transaction.setDate(LocalDateTime.parse(date));
         transaction.setAmount(amount);
-        transaction.setCategory(category);
+        transaction.setCategory(categoryType);
         transaction.setDescription(description);
         transaction.setType(type);
         transaction.setAccount(account);
