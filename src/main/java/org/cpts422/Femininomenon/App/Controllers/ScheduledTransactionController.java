@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,12 +66,21 @@ public class ScheduledTransactionController {
             return "error";
         }
 
+        ScheduledTransactionModel.CategoryType categoryType;
+        try {
+            categoryType = ScheduledTransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            System.out.println("Invalid category: " + category);
+            return "error";
+        }
+
         ScheduledTransactionModel newScheduledTransaction = new ScheduledTransactionModel(
                 user,
                 frequency,
                 recentPayment,
                 amount,
-                category,
+                categoryType,
                 description,
                 type,
                 account);
@@ -110,7 +118,7 @@ public class ScheduledTransactionController {
     }
 
     @PostMapping("/updateScheduledTransaction")
-    public String updateScheduledTransaction( Long id, String login, String frequency, float amount,  String category, String description,  ScheduledTransactionModel.TransactionType type, String account, Model model) {
+    public String updateScheduledTransaction( Long id, String login, String frequency, float amount, String category, String description,  ScheduledTransactionModel.TransactionType type, String account, Model model) {
 
         // get the transaction ID
         ScheduledTransactionModel scheduledTransaction = scheduledTransactionService.getTransactionById(id);
@@ -119,9 +127,18 @@ public class ScheduledTransactionController {
             return "error";
         }
 
+        ScheduledTransactionModel.CategoryType categoryType;
+        try {
+            categoryType = ScheduledTransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            System.out.println("Invalid category: " + category);
+            return "error";
+        }
+
         scheduledTransaction.setFrequency(frequency);
         scheduledTransaction.setAmount(amount);
-        scheduledTransaction.setCategory(category);
+        scheduledTransaction.setCategory(categoryType);
         scheduledTransaction.setDescription(description);
         scheduledTransaction.setType(type);
         scheduledTransaction.setAccount(account);

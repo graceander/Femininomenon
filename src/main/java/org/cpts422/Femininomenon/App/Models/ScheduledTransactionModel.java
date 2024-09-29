@@ -1,5 +1,6 @@
 package org.cpts422.Femininomenon.App.Models;
 import jakarta.persistence.*;
+import jdk.jfr.Category;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,11 +25,12 @@ public class ScheduledTransactionModel {
     @Column(name = "amount", nullable = false)
     float amount;
 
-    @Column(name = "category")
-    String category;
-
     @Column(name = "description")
     String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    CategoryType category;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -37,6 +39,16 @@ public class ScheduledTransactionModel {
     @Column(name = "account")
     String account;
 
+    public enum CategoryType {
+        GROCERIES,
+        UTILITIES,
+        ENTERTAINMENT,
+        TRANSPORTATION,
+        SALARY,
+        HEALTHCARE,
+        OTHER
+    }
+
     public enum TransactionType {
         INCOME,
         EXPENSE
@@ -44,7 +56,7 @@ public class ScheduledTransactionModel {
 
     public ScheduledTransactionModel() {}
 
-    public ScheduledTransactionModel(UserModel user, String frequency, LocalDateTime recentPayment, float amount, String category, String description, TransactionType type, String account) {
+    public ScheduledTransactionModel(UserModel user, String frequency, LocalDateTime recentPayment, float amount, CategoryType category, String description, TransactionType type, String account) {
         this.user = user;
         this.frequency = frequency;
         this.recentPayment = recentPayment;
@@ -95,11 +107,11 @@ public class ScheduledTransactionModel {
         this.amount = amount;
     }
 
-    public String getCategory() {
+    public CategoryType getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(CategoryType category) {
         this.category = category;
     }
 
@@ -137,7 +149,7 @@ public class ScheduledTransactionModel {
                 Objects.equals(frequency, that.frequency) &&
                 Objects.equals(recentPayment, that.recentPayment) &&
                 Objects.equals(amount, that.amount) &&
-                Objects.equals(category, that.category) &&
+                category == that.category &&
                 Objects.equals(description, that.description) &&
                 type == that.type &&
                 Objects.equals(account, that.account);
