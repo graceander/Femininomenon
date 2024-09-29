@@ -34,9 +34,17 @@ public class InboxMessageService {
         return inboxMessageRepository.findByUser(user);
     }
 
-    public void addMessage(InboxMessageModel message) {
-        inboxMessageRepository.save(message);
+    public void addMessage(UserModel user, String messageContent) {
+        // Check if a similar message already exists for this user within the last 24 hours
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+        boolean messageExists = inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(user, messageContent, oneDayAgo);
+
+        if (!messageExists) {
+            InboxMessageModel newMessage = new InboxMessageModel(user, messageContent);
+            inboxMessageRepository.save(newMessage);
+        }
     }
+
     // check for overspending
     public void checkSpendingRules(UserModel user) {
         List<UserRuleModel> rules = userRuleService.getRulesByUserLogin(user.getLogin());
@@ -62,7 +70,7 @@ public class InboxMessageService {
             if (rule.getRuleType() == UserRuleModel.RuleType.MAXIMUM_SPENDING && totalAmount > rule.getLimitAmount()) {
                 String message = String.format("Alert: You've exceeded your %s spending limit for %s. Spent: $%.2f, Limit: $%.2f",
                         rule.getFrequency().toString().toLowerCase(), rule.getCategory(), totalAmount, rule.getLimitAmount());
-                addMessage(new InboxMessageModel(user, message));
+                addMessage(user, message);
             } else if (rule.getRuleType() == UserRuleModel.RuleType.MINIMUM_SAVINGS) {
                 double savings = transactions.stream()
                         .filter(t -> t.getType() == TransactionModel.TransactionType.INCOME)
@@ -72,7 +80,7 @@ public class InboxMessageService {
                 if (savings < rule.getLimitAmount()) {
                     String message = String.format("Alert: Your %s savings for %s are below the target. Saved: $%.2f, Target: $%.2f",
                             rule.getFrequency().toString().toLowerCase(), rule.getCategory(), savings, rule.getLimitAmount());
-                    addMessage(new InboxMessageModel(user, message));
+                    addMessage(user, message);
                 }
             }
         }
@@ -113,7 +121,7 @@ public class InboxMessageService {
         if (totalExpenses > totalIncome) {
             String message = String.format("Alert: Your expenses ($%.2f) have exceeded your income ($%.2f) this month.",
                     totalExpenses, totalIncome);
-            addMessage(new InboxMessageModel(user, message));
+            addMessage(user, message);
         }
     }
 }
