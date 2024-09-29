@@ -4,6 +4,7 @@ import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Service.TransactionService;
 import org.cpts422.Femininomenon.App.Service.UsersService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,42 +20,36 @@ public class TransactionController {
     private final TransactionService transactionService;
     private final UsersService usersService;
 
+    @Autowired
     public TransactionController(TransactionService transactionService, UsersService usersService) {
         this.transactionService = transactionService;
         this.usersService = usersService;
     }
+
     @GetMapping("/goHome")
     public String goHome(@RequestParam("login") String login, Model model) {
         return "redirect:/home?login=" + login;
     }
 
-
     @GetMapping("/home")
-    public String homePage(String login, Model model) {
+    public String homePage(@RequestParam("login") String login,
+                           @RequestParam(value = "period", defaultValue = "overall") String period,
+                           Model model) {
         UserModel user = usersService.findByLogin(login);
         if (user == null) {
             model.addAttribute("error", "User not found");
             return "error";
         }
-        List<TransactionModel> transactions = transactionService.getTransactionsByUser(user.getLogin());
 
-        if (transactions == null || transactions.isEmpty()) {
-            model.addAttribute("message", "No transactions found for this user.");
-        } else {
-            model.addAttribute("transactions", transactions);
-        }
+        Map<TransactionModel.CategoryType, Double> spendingByCategory = transactionService.getSpendingByCategory(login, period);
+        double totalSpending = transactionService.getTotalSpending(login, period);
+        List<TransactionModel> transactions = transactionService.getTransactionsByUser(login);
 
-        // Add spending data for the chart
-        LocalDateTime now = LocalDateTime.now();
-        int currentYear = now.getYear();
-        int currentMonth = now.getMonthValue();
-
-        float totalSpending = transactionService.getTotalSpendingForMonth(login, currentYear, currentMonth);
-        Map<String, Float> spendingByCategory = transactionService.getSpendingByCategory(login, currentYear, currentMonth);
-
-        model.addAttribute("totalSpending", totalSpending);
-        model.addAttribute("spendingByCategory", spendingByCategory);
         model.addAttribute("user", user);
+        model.addAttribute("spendingByCategory", spendingByCategory);
+        model.addAttribute("totalSpending", totalSpending);
+        model.addAttribute("selectedPeriod", period);
+        model.addAttribute("transactions", transactions);
 
         return "home";
     }

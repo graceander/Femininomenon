@@ -23,6 +23,49 @@ public class TransactionService {
         this.inboxMessageService = inboxMessageService;
     }
 
+    public Map<TransactionModel.CategoryType, Double> getSpendingByCategory(String userLogin, String period) {
+        LocalDateTime startDate = getStartDateForPeriod(period);
+        LocalDateTime endDate = LocalDateTime.now();
+
+        List<TransactionModel> transactions = transactionRepository.findByUserLoginAndDateBetween(userLogin, startDate, endDate);
+
+        return transactions.stream()
+                .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
+                .collect(Collectors.groupingBy(
+                        TransactionModel::getCategory,
+                        Collectors.summingDouble(TransactionModel::getAmount)
+                ));
+    }
+
+    public double getTotalSpending(String userLogin, String period) {
+        LocalDateTime startDate = getStartDateForPeriod(period);
+        LocalDateTime endDate = LocalDateTime.now();
+
+        List<TransactionModel> transactions = transactionRepository.findByUserLoginAndDateBetween(userLogin, startDate, endDate);
+
+        return transactions.stream()
+                .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
+                .mapToDouble(TransactionModel::getAmount)
+                .sum();
+    }
+
+    private LocalDateTime getStartDateForPeriod(String period) {
+        LocalDateTime now = LocalDateTime.now();
+        switch (period) {
+            case "day":
+                return now.withHour(0).withMinute(0).withSecond(0);
+            case "week":
+                return now.minusWeeks(1);
+            case "month":
+                return now.withDayOfMonth(1);
+            case "year":
+                return now.withDayOfYear(1);
+            case "overall":
+            default:
+                return LocalDateTime.of(1970, 1, 1, 0, 0); // For "overall", return a very old date
+        }
+    }
+
     public void saveTransaction(TransactionModel transaction) {
         transactionRepository.save(transaction);
 

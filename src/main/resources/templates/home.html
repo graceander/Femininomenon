@@ -8,14 +8,23 @@
 <body>
 <h2>WELCOME TO FEMININOMENON, <span th:text="${user.login}"></span></h2>
 
-<div>
-    <img src="/more cats.jpg" alt="A cute cat" width="1200" height="800">
-</div>
+
 
 <h3>Spending Overview</h3>
+<form id="periodForm" th:action="@{/home}" method="get">
+    <input type="hidden" name="login" th:value="${user.login}">
+    <select name="period" onchange="this.form.submit()">
+        <option value="overall" th:selected="${selectedPeriod == 'overall'}">Overall</option>
+        <option value="day" th:selected="${selectedPeriod == 'day'}">Day</option>
+        <option value="week" th:selected="${selectedPeriod == 'week'}">Week</option>
+        <option value="month" th:selected="${selectedPeriod == 'month'}">Month</option>
+        <option value="year" th:selected="${selectedPeriod == 'year'}">Year</option>
+    </select>
+</form>
+
 <p>Total Spending: $<span th:text="${#numbers.formatDecimal(totalSpending, 1, 2)}"></span></p>
 
-<div th:if="${totalSpending == 0}">No expenses logged for this month.</div>
+<div th:if="${totalSpending == 0}">No expenses logged for this period.</div>
 <div th:unless="${totalSpending == 0}" style="width: 50%; margin: auto;">
     <canvas id="spendingChart"></canvas>
 </div>
@@ -98,7 +107,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Spending by Category'
+                    text: 'Spending by Category - ' + /*[[${selectedPeriod}]]*/ 'Overall'
                 }
             }
         }
