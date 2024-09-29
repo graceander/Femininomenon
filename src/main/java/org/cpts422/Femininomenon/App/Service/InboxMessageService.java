@@ -45,6 +45,19 @@ public class InboxMessageService {
         }
     }
 
+    public void markMessageAsRead(Long messageId) {
+        InboxMessageModel message = inboxMessageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setRead(true);
+        inboxMessageRepository.save(message);
+    }
+
+    public void markAllMessagesAsRead(UserModel user) {
+        List<InboxMessageModel> unreadMessages = inboxMessageRepository.findByUserAndIsReadFalse(user);
+        unreadMessages.forEach(message -> message.setRead(true));
+        inboxMessageRepository.saveAll(unreadMessages);
+    }
+
     // check for overspending
     public void checkSpendingRules(UserModel user) {
         List<UserRuleModel> rules = userRuleService.getRulesByUserLogin(user.getLogin());
@@ -104,21 +117,27 @@ public class InboxMessageService {
         LocalDateTime startOfMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
 
-        List<TransactionModel> transactions = transactionRepository.findByUserLogin(user.getLogin());
+        List<TransactionModel> transactions = transactionRepository.findByUserLoginAndDateBetween(
+                user.getLogin(), startOfMonth, endOfMonth);
+
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found for user: " + user.getLogin());
+            return; // Exit the method if there are no transactions
+        }
 
         double totalIncome = transactions.stream()
-                .filter(t -> t.getDate().isAfter(startOfMonth) && t.getDate().isBefore(endOfMonth))
                 .filter(t -> t.getType() == TransactionModel.TransactionType.INCOME)
                 .mapToDouble(TransactionModel::getAmount)
                 .sum();
 
         double totalExpenses = transactions.stream()
-                .filter(t -> t.getDate().isAfter(startOfMonth) && t.getDate().isBefore(endOfMonth))
                 .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
                 .mapToDouble(TransactionModel::getAmount)
                 .sum();
 
-        if (totalExpenses > totalIncome) {
+        System.out.println("User: " + user.getLogin() + ", Total Income: " + totalIncome + ", Total Expenses: " + totalExpenses);
+
+        if (totalExpenses > totalIncome && totalIncome > 0) {
             String message = String.format("Alert: Your expenses ($%.2f) have exceeded your income ($%.2f) this month.",
                     totalExpenses, totalIncome);
             addMessage(user, message);

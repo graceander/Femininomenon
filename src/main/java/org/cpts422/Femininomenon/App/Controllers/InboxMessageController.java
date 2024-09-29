@@ -7,9 +7,7 @@ import org.cpts422.Femininomenon.App.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,4 +34,16 @@ public class InboxMessageController {
         return "userInbox";
     }
 
+    @PostMapping("/markAsRead/{messageId}")
+    public String markMessageAsRead(@PathVariable Long messageId, @RequestParam("userLogin") String userLogin) {
+        inboxMessageService.markMessageAsRead(messageId);
+        return "redirect:/user/inbox/view?userLogin=" + userLogin;
+    }
+
+    @PostMapping("/markAllAsRead")
+    public String markAllMessagesAsRead(@RequestParam("userLogin") String userLogin) {
+        UserModel user = usersService.findByLogin(userLogin);
+        inboxMessageService.markAllMessagesAsRead(user);
+        return "redirect:/user/inbox/view?userLogin=" + userLogin;
+    }
 }

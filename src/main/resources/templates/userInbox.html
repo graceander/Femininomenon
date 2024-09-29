@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Inbox</title>
+    <style>
+        .unread {
+            font-weight: bold;
+        }
+        .read {
+            font-weight: normal;
+        }
+    </style>
 </head>
 <body>
 
@@ -18,16 +26,24 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="message : ${messages}">
+    <tr th:each="message : ${messages}" th:class="${message.read ? 'read' : 'unread'}">
         <td th:text="${message.message}"></td>
         <td th:text="${#temporals.format(message.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
-        <td th:text="${message.isRead ? 'Read' : 'Unread'}"></td>
+        <td th:text="${message.read ? 'Read' : 'Unread'}"></td>
+        <td>
+            <form th:if="${!message.read}" th:action="@{/user/inbox/markAsRead/{id}(id=${message.id})}" method="post">
+                <input type="hidden" name="userLogin" th:value="${userLogin}">
+                <button type="submit">Mark as Read</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
+
 <form action="/goHome" method="get">
     <input type="hidden" name="login" th:value="${userLogin}">
     <button type="submit">Go Home</button>
 </form>
+
 </body>
 </html>

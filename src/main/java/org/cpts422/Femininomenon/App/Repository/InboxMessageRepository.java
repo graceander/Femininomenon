@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface InboxMessageRepository extends JpaRepository<InboxMessageModel, Long> {
     List<InboxMessageModel> findByUser(UserModel user);
+    List<InboxMessageModel> findByUserAndIsReadFalse(UserModel user);
     boolean existsByUserAndMessageContainingAndTimestampAfter(UserModel user, String messageContent, LocalDateTime timestamp);
 }

@@ -1,8 +1,8 @@
 package org.cpts422.Femininomenon.App.Models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+
 @Entity
 public class InboxMessageModel {
     @Id
