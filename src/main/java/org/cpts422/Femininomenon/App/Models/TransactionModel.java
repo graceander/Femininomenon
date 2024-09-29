@@ -21,8 +21,9 @@ public class TransactionModel {
     @Column(name = "amount", nullable = false)
     float amount;
 
-    @Column(name = "category")
-    String category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    CategoryType category;
 
     @Column(name = "description")
     String description;
@@ -34,14 +35,26 @@ public class TransactionModel {
     @Column(name = "account")
     String account;
 
+    public enum CategoryType {
+        GROCERIES,
+        UTILITIES,
+        ENTERTAINMENT,
+        TRANSPORTATION,
+        SALARY,
+        HEALTHCARE,
+        OTHER
+    }
+
     public enum TransactionType {
         INCOME,
         EXPENSE
     }
 
+
     public TransactionModel() {}
 
-    public TransactionModel(UserModel user, LocalDateTime date, float amount, String category, String description, TransactionType type, String account) {
+
+    public TransactionModel(UserModel user, LocalDateTime date, float amount, CategoryType category, String description, TransactionType type, String account) {
         this.user = user;
         this.date = date;
         this.amount = amount;
@@ -50,6 +63,7 @@ public class TransactionModel {
         this.type = type;
         this.account = account;
     }
+
 
     public Long getId() {
         return id;
@@ -83,12 +97,12 @@ public class TransactionModel {
         this.amount = amount;
     }
 
-    public String getCategory() {
-        return category;
+    public CategoryType getCategory() {
+        return category; // Return the CategoryType enum
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategory(CategoryType category) {
+        this.category = category; // Set the CategoryType enum
     }
 
     public String getDescription() {
@@ -120,11 +134,11 @@ public class TransactionModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionModel that = (TransactionModel) o;
-        return Objects.equals(id, that.id) &&
+        return Float.compare(that.amount, amount) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(user, that.user) &&
                 Objects.equals(date, that.date) &&
-                Objects.equals(amount, that.amount) &&
-                Objects.equals(category, that.category) &&
+                category == that.category && // Check equality with enum
                 Objects.equals(description, that.description) &&
                 type == that.type &&
                 Objects.equals(account, that.account);
@@ -142,7 +156,7 @@ public class TransactionModel {
                 ", user=" + user +
                 ", date=" + date +
                 ", amount=" + amount +
-                ", category='" + category + '\'' +
+                ", category=" + category + // Display enum name
                 ", description='" + description + '\'' +
                 ", type=" + type +
                 ", account='" + account + '\'' +

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Rules</title>
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>User Spending Rules for: <span th:text="${userLogin}"></span></h2>
+<form action="/goHome" method="get">
+  <input type="hidden" name="login" th:value="${userLogin}">
+  <button type="submit">Go Home</button>
+</form>
+
+<button id="addRuleBtn">Add Rule</button>
+
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>Category</th>
+    <th>Limit Amount</th>
+    <th>Frequency</th>
+    <th>Rule Type</th>
+  </tr>
+  </thead>
+  <tbody>
+<tr th:each="rule : ${rules}">
+  <td th:if="${rule.category} != null" th:text="${rule.category}"></td>
+  <td th:if="${rule.category} == null">No Category</td>
+  <td th:text="${rule.limitAmount}"></td>
+  <td th:text="${rule.frequency}"></td>
+  <td th:text="${rule.ruleType}"></td>
+</tr>
+</tbody>
+
+</table>
+
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>Add Spending Rule</h2>
+    <form id="addRuleForm" action="/user/rules/add" method="post">
+      <input type="hidden" name="userLogin" th:value="${userLogin}">
+
+      <label for="category">Category:</label>
+      <select name="category">
+        <option value="" disabled selected>Select a category</option>
+        <option value="GROCERIES">GROCERIES</option>
+        <option value="UTILITIES">UTILITIES</option>
+        <option value="ENTERTAINMENT">ENTERTAINMENT</option>
+        <option value="TRANSPORTATION">TRANSPORTATION</option>
+        <option value="SALARY">SALARY</option>
+        <option value="HEALTHCARE">HEALTHCARE</option>
+        <option value="OTHER">OTHER</option>
+      </select>
+
+      <label for="limitAmount">Limit Amount:</label>
+      <input type="number" name="limitAmount" step="0.01" required>
+
+      <label for="frequency">Frequency:</label>
+      <select name="frequency" required>
+        <option value="DAILY">Daily</option>
+        <option value="WEEKLY">Weekly</option>
+        <option value="MONTHLY">Monthly</option>
+      </select>
+
+      <label for="ruleType">Rule Type:</label>
+      <select name="ruleType" required>
+        <option value="MAXIMUM_SPENDING">Maximum Spending</option>
+        <option value="MINIMUM_SAVINGS">Minimum Savings</option>
+      </select>
+
+      <button type="submit">Add Rule</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  var modal = document.getElementById("myModal");
+
+  var btn = document.getElementById("addRuleBtn");
+
+  var span = document.getElementById("closeModal");
+
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+
+</body>
+</html>

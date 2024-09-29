@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class TransactionController {
@@ -42,9 +43,22 @@ public class TransactionController {
         } else {
             model.addAttribute("transactions", transactions);
         }
+
+        // Add spending data for the chart
+        LocalDateTime now = LocalDateTime.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        float totalSpending = transactionService.getTotalSpendingForMonth(login, currentYear, currentMonth);
+        Map<String, Float> spendingByCategory = transactionService.getSpendingByCategory(login, currentYear, currentMonth);
+
+        model.addAttribute("totalSpending", totalSpending);
+        model.addAttribute("spendingByCategory", spendingByCategory);
         model.addAttribute("user", user);
+
         return "home";
     }
+
 
     @GetMapping("/addTransaction")
     public String AddTransactionPage( String login, Model model) {
@@ -65,7 +79,16 @@ public class TransactionController {
         {
             return "error";
         }
-        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, category, description, type, account);
+
+        TransactionModel.CategoryType categoryType;
+        try {
+            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            System.out.println("Invalid category: " + category);
+            return "error";
+        }
+        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, categoryType, description, type, account);
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
     }
@@ -107,9 +130,18 @@ public class TransactionController {
             return "error";
         }
 
+        TransactionModel.CategoryType categoryType;
+        try {
+            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            model.addAttribute("error", "Invalid category: " + category);
+            return "error";
+        }
+
         transaction.setDate(LocalDateTime.parse(date));
         transaction.setAmount(amount);
-        transaction.setCategory(category);
+        transaction.setCategory(categoryType);
         transaction.setDescription(description);
         transaction.setType(type);
         transaction.setAccount(account);

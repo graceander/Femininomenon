@@ -1,8 +1,8 @@
 package org.cpts422.Femininomenon.App.Models;
-
-
 import jakarta.persistence.*;
-
+import org.cpts422.Femininomenon.App.Models.UserRuleModel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +16,17 @@ public class UserModel {
     String email;
     String firstName;
     String lastName;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserRuleModel> rules = new ArrayList<>();
+
+    public List<UserRuleModel> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<UserRuleModel> rules) {
+        this.rules = rules;
+    }
 
 
     public Integer getId() {
@@ -65,6 +76,8 @@ public class UserModel {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+
 
 
 
