@@ -85,8 +85,11 @@ public class ScheduledTransactionController {
                 type,
                 account);
         scheduledTransactionService.saveTransaction(newScheduledTransaction);
-        TransactionModel initialTransaction = scheduledTransactionService.onCreateScheduledTransaction(newScheduledTransaction);
-        transactionService.saveTransaction(initialTransaction);
+
+        List<TransactionModel> initialTransactions = scheduledTransactionService.onCreateScheduledTransaction(newScheduledTransaction);
+        for (TransactionModel transaction : initialTransactions) {
+            transactionService.saveTransaction(transaction);
+        }
         return "redirect:/viewScheduledTransactions?login=" + login;
     }
 

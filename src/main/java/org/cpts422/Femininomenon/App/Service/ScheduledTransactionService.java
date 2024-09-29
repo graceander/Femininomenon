@@ -6,6 +6,7 @@ import org.cpts422.Femininomenon.App.Utils.BankHolidays;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,13 +42,13 @@ public class ScheduledTransactionService {
     public LocalDateTime findNextPaymentDate(ScheduledTransactionModel scheduledTransaction) {
         String frequency = scheduledTransaction.getFrequency();
         LocalDateTime recentPayment = scheduledTransaction.getRecentPayment();
-        if (frequency.equals("monthly") || frequency.equals("custom")) {
+        if (frequency.equals("Monthly") || frequency.equals("Custom")) {
             return recentPayment.plusMonths(1); // increments month
         }
-        else if (frequency.equals("weekly")) {
+        else if (frequency.equals("Weekly")) {
             return recentPayment.plusWeeks(1); // increments week by 1
         }
-        else if (frequency.equals("biweekly")) {
+        else if (frequency.equals("Biweekly")) {
             return recentPayment.plusWeeks(2); // increments week by 2
         }
         else {
@@ -55,20 +56,27 @@ public class ScheduledTransactionService {
         }
     }
 
-    public TransactionModel onCreateScheduledTransaction(ScheduledTransactionModel scheduledTransaction) {
+    public List<TransactionModel> onCreateScheduledTransaction(ScheduledTransactionModel scheduledTransaction) {
+       List<TransactionModel> yearOfTransactions = new ArrayList<>();
+        LocalDateTime yearAhead = scheduledTransaction.getRecentPayment().plusYears(1);
+        while (scheduledTransaction.getRecentPayment().isBefore(yearAhead)) {
+            TransactionModel.TransactionType newTransactionType = convertScheduledTypeToTransactionType(scheduledTransaction);
+            TransactionModel.CategoryType newCategoryType = convertScheduledCategoryToTransactionCategory(scheduledTransaction);
+            LocalDateTime adjustedPaymentDate = BankHolidays.adjustForBankClosures(scheduledTransaction.getRecentPayment());
+            TransactionModel newTransaction = new TransactionModel(
+                    scheduledTransaction.getUser(),
+                    adjustedPaymentDate,
+                    scheduledTransaction.getAmount(),
+                    newCategoryType,
+                    scheduledTransaction.getDescription(),
+                    newTransactionType,
+                    scheduledTransaction.getAccount());
+            yearOfTransactions.add(newTransaction);
+            LocalDateTime nextPaymentDate = findNextPaymentDate(scheduledTransaction);
+            scheduledTransaction.setRecentPayment(nextPaymentDate);
+        }
 
-        TransactionModel.TransactionType newTransactionType = convertScheduledTypeToTransactionType(scheduledTransaction);
-        TransactionModel.CategoryType newCategoryType = convertScheduledCategoryToTransactionCategory(scheduledTransaction);
-        LocalDateTime adjustedPaymentDate = BankHolidays.adjustForBankClosures(scheduledTransaction.getRecentPayment());
-        TransactionModel newTransaction = new TransactionModel(
-                scheduledTransaction.getUser(),
-                adjustedPaymentDate,
-                scheduledTransaction.getAmount(),
-                newCategoryType,
-                scheduledTransaction.getDescription(),
-                newTransactionType,
-                scheduledTransaction.getAccount());
-        return newTransaction;
+        return yearOfTransactions;
     }
 
     // Method to convert ScheduledTransactionType to TransactionType
