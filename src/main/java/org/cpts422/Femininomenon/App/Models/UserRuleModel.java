@@ -16,8 +16,9 @@ public class UserRuleModel {
     @JoinColumn(name = "user_id", nullable = false)
     UserModel user;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    String category;
+    TransactionModel.CategoryType category;
 
     @Column(name = "limit_amount", nullable = false)
     float limitAmount;
@@ -43,7 +44,7 @@ public class UserRuleModel {
 
     public UserRuleModel() {}
 
-    public UserRuleModel(UserModel user, String category, float limitAmount, Frequency frequency, RuleType ruleType) {
+    public UserRuleModel(UserModel user, TransactionModel.CategoryType category, float limitAmount, Frequency frequency, RuleType ruleType) {
         this.user = user;
         this.category = category;
         this.limitAmount = limitAmount;
@@ -67,11 +68,11 @@ public class UserRuleModel {
         this.user = user;
     }
 
-    public String getCategory() {
+    public TransactionModel.CategoryType getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(TransactionModel.CategoryType category) {
         this.category = category;
     }
 

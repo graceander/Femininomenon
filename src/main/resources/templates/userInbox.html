@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,7 @@
     <tbody>
     <tr th:each="message : ${messages}">
         <td th:text="${message.message}"></td>
-        <td th:text="${#dates.format(message.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${#temporals.format(message.timestamp, 'yyyy-MM-dd HH:mm')}"></td>
         <td th:text="${message.isRead ? 'Read' : 'Unread'}"></td>
     </tr>
     </tbody>

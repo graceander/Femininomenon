@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,15 +61,13 @@
   </tr>
   </thead>
   <tbody>
-<tr th:each="rule : ${rules}">
-  <td th:if="${rule.category} != null" th:text="${rule.category}"></td>
-  <td th:if="${rule.category} == null">No Category</td>
-  <td th:text="${rule.limitAmount}"></td>
-  <td th:text="${rule.frequency}"></td>
-  <td th:text="${rule.ruleType}"></td>
-</tr>
-</tbody>
-
+  <tr th:each="rule : ${rules}">
+    <td th:text="${rule.category != null ? rule.category : 'No Category'}"></td>
+    <td th:text="${rule.limitAmount}"></td>
+    <td th:text="${rule.frequency}"></td>
+    <td th:text="${rule.ruleType}"></td>
+  </tr>
+  </tbody>
 </table>
 
 
@@ -81,29 +79,25 @@
       <input type="hidden" name="userLogin" th:value="${userLogin}">
 
       <label for="category">Category:</label>
-      <select name="category">
+      <select name="category" id="category">
         <option value="" disabled selected>Select a category</option>
-        <option value="GROCERIES">GROCERIES</option>
-        <option value="UTILITIES">UTILITIES</option>
-        <option value="ENTERTAINMENT">ENTERTAINMENT</option>
-        <option value="TRANSPORTATION">TRANSPORTATION</option>
-        <option value="SALARY">SALARY</option>
-        <option value="HEALTHCARE">HEALTHCARE</option>
-        <option value="OTHER">OTHER</option>
+        <option th:each="categoryType : ${T(org.cpts422.Femininomenon.App.Models.TransactionModel.CategoryType).values()}"
+                th:value="${categoryType}" th:text="${categoryType}">
+        </option>
       </select>
 
       <label for="limitAmount">Limit Amount:</label>
-      <input type="number" name="limitAmount" step="0.01" required>
+      <input type="number" name="limitAmount" id="limitAmount" step="0.01" required>
 
       <label for="frequency">Frequency:</label>
-      <select name="frequency" required>
+      <select name="frequency" id="frequency" required>
         <option value="DAILY">Daily</option>
         <option value="WEEKLY">Weekly</option>
         <option value="MONTHLY">Monthly</option>
       </select>
 
       <label for="ruleType">Rule Type:</label>
-      <select name="ruleType" required>
+      <select name="ruleType" id="ruleType" required>
         <option value="MAXIMUM_SPENDING">Maximum Spending</option>
         <option value="MINIMUM_SAVINGS">Minimum Savings</option>
       </select>

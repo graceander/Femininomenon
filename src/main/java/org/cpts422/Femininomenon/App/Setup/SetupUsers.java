@@ -4,8 +4,10 @@ import java.time.format.DateTimeFormatter;
 import jakarta.annotation.PostConstruct;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
+import org.cpts422.Femininomenon.App.Models.UserRuleModel;
 import org.cpts422.Femininomenon.App.Service.TransactionService;
 import org.cpts422.Femininomenon.App.Service.UsersService;
+import org.cpts422.Femininomenon.App.Service.UserRuleService;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
@@ -15,24 +17,34 @@ public class SetupUsers {
 
     private final UsersService usersService;
     private final TransactionService transactionService;
+    private final UserRuleService userRuleService;
 
-    public SetupUsers(UsersService usersService, TransactionService transactionService) {
+    public SetupUsers(UsersService usersService, TransactionService transactionService, UserRuleService userRuleService) {
         this.usersService = usersService;
         this.transactionService = transactionService;
+        this.userRuleService = userRuleService;
     }
 
     @PostConstruct
     public void loadData() {
         // Register users
         UserModel userMatthew = usersService.registerUser("Matthew", "Pham", "matthew", "matthew", "OrangeCats@gmail.com");
+
         UserModel userGrace = usersService.registerUser("Grace", "Anderson", "grace", "grace", "Cats@gmail.com");
+
         UserModel userBriana = usersService.registerUser("Briana", "Briana", "briana", "briana", "Cow@gmail.com");
 
+        // Add some initial rules
+        UserRuleModel groceryRule = new UserRuleModel(userMatthew, TransactionModel.CategoryType.GROCERIES, 130.0f, UserRuleModel.Frequency.WEEKLY, UserRuleModel.RuleType.MAXIMUM_SPENDING);
+        userRuleService.saveRule(groceryRule);
+
+        UserRuleModel entertainmentRule = new UserRuleModel(userGrace, TransactionModel.CategoryType.ENTERTAINMENT, 200.0f, UserRuleModel.Frequency.MONTHLY, UserRuleModel.RuleType.MAXIMUM_SPENDING);
+        userRuleService.saveRule(entertainmentRule);
 
         addTransactionsToUser(userMatthew);
         addTransactionsToUser(userGrace);
         addTransactionsToUser(userBriana);
-        System.out.println("All the users are registered.");
+        System.out.println("All the users are registered and transactions are loaded.");
 
     }
 
@@ -74,8 +86,8 @@ public class SetupUsers {
         // enterainment exceed
 
         // create inbox
-        // complex spedning rules.
-        // for for any month should not be less than the amount than i spent on groceries
+        // complex spending rules.
+        // for any month should not be less than the amount than I spent on groceries
 
 
     }

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Entity
 public class InboxMessageModel {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -27,10 +28,9 @@ public class InboxMessageModel {
     }
 
     public InboxMessageModel(UserModel user, String message) {
+        this();
         this.user = user;
         this.message = message;
-        this.timestamp = LocalDateTime.now();
-        this.isRead = false;
     }
 
     public Long getId() {

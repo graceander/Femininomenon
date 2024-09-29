@@ -1,4 +1,5 @@
 package org.cpts422.Femininomenon.App.Controllers;
+import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Models.UserRuleModel;
 import org.cpts422.Femininomenon.App.Service.UserRuleService;
@@ -31,7 +32,11 @@ public class UserRuleController {
     }
 
     @PostMapping("/add")
-    public String addRule(@RequestParam String userLogin,String category, float limitAmount, UserRuleModel.Frequency frequency, UserRuleModel.RuleType ruleType) {
+    public String addRule(@RequestParam String userLogin,
+                          @RequestParam TransactionModel.CategoryType category,
+                          @RequestParam float limitAmount,
+                          @RequestParam UserRuleModel.Frequency frequency,
+                          @RequestParam UserRuleModel.RuleType ruleType) {
         UserModel user = usersService.findByLogin(userLogin);
         if (user != null) {
             UserRuleModel newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType);
@@ -39,6 +44,7 @@ public class UserRuleController {
         }
         return "redirect:/user/rules/view?userLogin=" + userLogin;
     }
+
     @GetMapping("/goHome")
     public String goHome(@RequestParam("login") String login, Model model) {
         return "redirect:/home?login=" + login;

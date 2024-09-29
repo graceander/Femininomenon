@@ -22,8 +22,8 @@ public class TransactionModel {
     float amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false)
-    CategoryType category;
+    @Column(name = "category")
+    private CategoryType category;
 
     @Column(name = "description")
     String description;

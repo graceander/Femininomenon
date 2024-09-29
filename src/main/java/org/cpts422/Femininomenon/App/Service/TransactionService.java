@@ -1,7 +1,8 @@
 package org.cpts422.Femininomenon.App.Service;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
-import org.cpts422.Femininomenon.App.Models.UserRuleModel;
+import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,17 +15,25 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final InboxMessageService inboxMessageService;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    @Autowired
+    public TransactionService(TransactionRepository transactionRepository, InboxMessageService inboxMessageService) {
         this.transactionRepository = transactionRepository;
-    }
-
-    public List<TransactionModel> getTransactionsByUser(String login) {
-        return transactionRepository.findByUserLogin(login);
+        this.inboxMessageService = inboxMessageService;
     }
 
     public void saveTransaction(TransactionModel transaction) {
         transactionRepository.save(transaction);
+
+        // Check for overspending after saving the transaction
+        UserModel user = transaction.getUser();
+        inboxMessageService.checkSpendingRules(user);
+        inboxMessageService.checkForOverallOverspending(user);
+    }
+
+    public List<TransactionModel> getTransactionsByUser(String login) {
+        return transactionRepository.findByUserLogin(login);
     }
 
     public void removeTransaction(TransactionModel transaction) {

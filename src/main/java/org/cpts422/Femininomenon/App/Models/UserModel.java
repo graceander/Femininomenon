@@ -1,9 +1,8 @@
 package org.cpts422.Femininomenon.App.Models;
 import jakarta.persistence.*;
 import org.cpts422.Femininomenon.App.Models.UserRuleModel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 
 @Entity
 @Table(name = "users_table")
@@ -16,6 +15,13 @@ public class UserModel {
     String email;
     String firstName;
     String lastName;
+
+    @ElementCollection
+    @CollectionTable(name = "user_spending_limits", joinColumns = @JoinColumn(name = "user_id"))
+    @MapKeyEnumerated(EnumType.STRING)
+    @Column(name = "spending_limit")
+    private Map<TransactionModel.CategoryType, Double> spendingLimits = new HashMap<>();
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserRuleModel> rules = new ArrayList<>();
@@ -110,6 +116,14 @@ public class UserModel {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';
+    }
+
+    public Map<TransactionModel.CategoryType, Double> getSpendingLimits() {
+        return spendingLimits;
+    }
+
+    public void setSpendingLimit(TransactionModel.CategoryType category, Double limit) {
+        this.spendingLimits.put(category, limit);
     }
 
 }
