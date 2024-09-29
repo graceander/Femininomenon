@@ -34,13 +34,6 @@ public class SetupUsers {
 
         UserModel userBriana = usersService.registerUser("Briana", "Briana", "briana", "briana", "Cow@gmail.com");
 
-        // Add some initial rules
-        UserRuleModel groceryRule = new UserRuleModel(userMatthew, TransactionModel.CategoryType.GROCERIES, 130.0f, UserRuleModel.Frequency.WEEKLY, UserRuleModel.RuleType.MAXIMUM_SPENDING);
-        userRuleService.saveRule(groceryRule);
-
-        UserRuleModel entertainmentRule = new UserRuleModel(userGrace, TransactionModel.CategoryType.ENTERTAINMENT, 200.0f, UserRuleModel.Frequency.MONTHLY, UserRuleModel.RuleType.MAXIMUM_SPENDING);
-        userRuleService.saveRule(entertainmentRule);
-
         addTransactionsToUser(userMatthew);
         addTransactionsToUser(userGrace);
         addTransactionsToUser(userBriana);
