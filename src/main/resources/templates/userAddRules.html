@@ -105,7 +105,6 @@
         <option value="NOT_EXCEED_CATEGORY">Not exceed Category</option>
       </select>
 
-      <!-- New Category Select (Initially Hidden) -->
       <div id="extraCategory" style="display: none;">
         <label for="extraCategorySelect">Additional Category to Limit:</label>
         <select name="extraCategory" id="extraCategorySelect">
@@ -145,7 +144,7 @@
     }
   }
 
-  // Show the extra category selection when "Not exceed Category" is selected
+
   ruleTypeSelect.addEventListener('change', function() {
     if (this.value === 'NOT_EXCEED_CATEGORY') {
       extraCategory.style.display = 'block';
