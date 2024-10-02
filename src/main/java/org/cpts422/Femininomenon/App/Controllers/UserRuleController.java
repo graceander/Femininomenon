@@ -32,23 +32,29 @@ public class UserRuleController {
     }
 
     @PostMapping("/add")
-    public String addRule(@RequestParam String userLogin,
-                          @RequestParam TransactionModel.CategoryType category,
-                          @RequestParam float limitAmount,
-                          @RequestParam UserRuleModel.Frequency frequency,
-                          @RequestParam UserRuleModel.RuleType ruleType) {
+    public String addRule(@RequestParam("userLogin") String userLogin,
+                          @RequestParam("category") TransactionModel.CategoryType category,
+                          @RequestParam("limitAmount") float limitAmount,
+                          @RequestParam("frequency") UserRuleModel.Frequency frequency,
+                          @RequestParam("ruleType") UserRuleModel.RuleType ruleType,
+                          @RequestParam(value = "extraCategory", required = false) TransactionModel.CategoryType extraCategory) {
+
         UserModel user = usersService.findByLogin(userLogin);
-        if (user != null) {
-            UserRuleModel newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType);
-            userRuleService.saveRule(newRule);
+
+        UserRuleModel newRule;
+        if (ruleType == UserRuleModel.RuleType.NOT_EXCEED_CATEGORY) {
+            newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType, extraCategory);
+        } else {
+            newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType, null);
         }
-        return "redirect:/user/rules/view?userLogin=" + userLogin;
+
+        userRuleService.saveRule(newRule);
+
+        return "redirect:/home?login=" + userLogin;
     }
 
-    @GetMapping("/goHome")
-    public String goHome(@RequestParam("login") String login, Model model) {
-        return "redirect:/home?login=" + login;
-    }
+
+
 
 }
 

@@ -50,7 +50,6 @@
 
 <button id="addRuleBtn">Add Rule</button>
 
-
 <table border="1">
   <thead>
   <tr>
@@ -58,6 +57,7 @@
     <th>Limit Amount</th>
     <th>Frequency</th>
     <th>Rule Type</th>
+    <th>Category Limit</th>
   </tr>
   </thead>
   <tbody>
@@ -66,6 +66,8 @@
     <td th:text="${rule.limitAmount}"></td>
     <td th:text="${rule.frequency}"></td>
     <td th:text="${rule.ruleType}"></td>
+    <td th:text="${rule.additionalCategory != null ? rule.additionalCategory : ''}"></td>
+
   </tr>
   </tbody>
 </table>
@@ -100,7 +102,19 @@
       <select name="ruleType" id="ruleType" required>
         <option value="MAXIMUM_SPENDING">Maximum Spending</option>
         <option value="MINIMUM_SAVINGS">Minimum Savings</option>
+        <option value="NOT_EXCEED_CATEGORY">Not exceed Category</option>
       </select>
+
+      <!-- New Category Select (Initially Hidden) -->
+      <div id="extraCategory" style="display: none;">
+        <label for="extraCategorySelect">Additional Category to Limit:</label>
+        <select name="extraCategory" id="extraCategorySelect">
+          <option value="" disabled selected>Select a category</option>
+          <option th:each="categoryType : ${T(org.cpts422.Femininomenon.App.Models.TransactionModel.CategoryType).values()}"
+                  th:value="${categoryType}" th:text="${categoryType}">
+          </option>
+        </select>
+      </div>
 
       <button type="submit">Add Rule</button>
     </form>
@@ -109,24 +123,36 @@
 
 <script>
   var modal = document.getElementById("myModal");
-
   var btn = document.getElementById("addRuleBtn");
-
   var span = document.getElementById("closeModal");
+  var ruleTypeSelect = document.getElementById("ruleType");
+  var extraCategory = document.getElementById("extraCategory");
+
 
   btn.onclick = function() {
     modal.style.display = "block";
   }
 
+
   span.onclick = function() {
     modal.style.display = "none";
   }
+
 
   window.onclick = function(event) {
     if (event.target == modal) {
       modal.style.display = "none";
     }
   }
+
+  // Show the extra category selection when "Not exceed Category" is selected
+  ruleTypeSelect.addEventListener('change', function() {
+    if (this.value === 'NOT_EXCEED_CATEGORY') {
+      extraCategory.style.display = 'block';
+    } else {
+      extraCategory.style.display = 'none';
+    }
+  });
 </script>
 
 </body>

@@ -40,6 +40,7 @@ public class InboxMessageController {
         return "redirect:/user/inbox/view?userLogin=" + userLogin;
     }
 
+
     @PostMapping("/markAllAsRead")
     public String markAllMessagesAsRead(@RequestParam("userLogin") String userLogin) {
         UserModel user = usersService.findByLogin(userLogin);

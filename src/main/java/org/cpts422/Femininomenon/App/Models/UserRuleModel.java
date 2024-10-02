@@ -31,25 +31,36 @@ public class UserRuleModel {
     @Enumerated(EnumType.STRING)
     RuleType ruleType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "additional_category")
+    TransactionModel.CategoryType additionalCategory;
+
     public enum Frequency {
-        DAILY,
-        WEEKLY,
-        MONTHLY
+        DAILY, WEEKLY, MONTHLY
     }
 
     public enum RuleType {
-        MAXIMUM_SPENDING,
-        MINIMUM_SAVINGS
+        MAXIMUM_SPENDING, MINIMUM_SAVINGS, NOT_EXCEED_CATEGORY
     }
 
     public UserRuleModel() {}
 
-    public UserRuleModel(UserModel user, TransactionModel.CategoryType category, float limitAmount, Frequency frequency, RuleType ruleType) {
+    public UserRuleModel(UserModel user, TransactionModel.CategoryType category, float limitAmount, Frequency frequency, RuleType ruleType, TransactionModel.CategoryType additionalCategory) {
         this.user = user;
         this.category = category;
         this.limitAmount = limitAmount;
         this.frequency = frequency;
         this.ruleType = ruleType;
+        this.additionalCategory = additionalCategory;
+    }
+
+
+    public TransactionModel.CategoryType getAdditionalCategory() {
+        return additionalCategory;
+    }
+
+    public void setAdditionalCategory(TransactionModel.CategoryType additionalCategory) {
+        this.additionalCategory = additionalCategory;
     }
 
     public Long getId() {
@@ -127,6 +138,7 @@ public class UserRuleModel {
                 ", limitAmount=" + limitAmount +
                 ", frequency=" + frequency +
                 ", ruleType=" + ruleType +
+                ", additionalCategory=" + additionalCategory +
                 '}';
     }
 }
