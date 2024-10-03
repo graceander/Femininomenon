@@ -2,6 +2,7 @@ package org.cpts422.Femininomenon.App.Controllers;
 
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
+import org.cpts422.Femininomenon.App.Service.CurrencyConversionService;
 import org.cpts422.Femininomenon.App.Service.TransactionService;
 import org.cpts422.Femininomenon.App.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +14,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class TransactionController {
 
     private final TransactionService transactionService;
     private final UsersService usersService;
+    private final CurrencyConversionService currencyConversionService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService, UsersService usersService) {
+    public TransactionController(TransactionService transactionService, UsersService usersService, CurrencyConversionService currencyConversionService) {
         this.transactionService = transactionService;
         this.usersService = usersService;
+        this.currencyConversionService = currencyConversionService;
     }
 
     @GetMapping("/goHome")
     public String goHome(@RequestParam("login") String login, Model model) {
         return "redirect:/home?login=" + login;
+    }
+
+    @PostMapping("/changeCurrency")
+    public String changeCurrency(@RequestParam("userLogin") String userLogin,
+                                 @RequestParam("newCurrency") String newCurrency) {
+        UserModel user = usersService.findByLogin(userLogin);
+        if (user != null) {
+            user.setCurrency(newCurrency);
+            usersService.saveUser(user);
+            System.out.println("Currency updated to " + newCurrency + " for user: " + userLogin);
+        } else {
+            System.out.println("User not found: " + userLogin);
+        }
+        return "redirect:/home?login=" + userLogin;
     }
 
     @GetMapping("/home")
@@ -44,6 +62,19 @@ public class TransactionController {
         Map<TransactionModel.CategoryType, Double> spendingByCategory = transactionService.getSpendingByCategory(login, period);
         double totalSpending = transactionService.getTotalSpending(login, period);
         List<TransactionModel> transactions = transactionService.getTransactionsByUser(login);
+
+        // Convert amounts to user's currency
+        String userCurrency = user.getCurrency();
+        spendingByCategory = spendingByCategory.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> currencyConversionService.convert(e.getValue(), "USD", userCurrency)
+                ));
+        totalSpending = currencyConversionService.convert(totalSpending, "USD", userCurrency);
+
+        transactions.forEach(t -> t.setAmount(
+                (float) currencyConversionService.convert(t.getAmount(), "USD", userCurrency)
+        ));
 
         model.addAttribute("user", user);
         model.addAttribute("spendingByCategory", spendingByCategory);

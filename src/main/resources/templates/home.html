@@ -8,7 +8,21 @@
 <body>
 <h2>WELCOME TO FEMININOMENON, <span th:text="${user.login}"></span></h2>
 
-
+<div class="currency-form">
+    <form action="/changeCurrency" method="post">
+        <input type="hidden" name="userLogin" th:value="${user.login}">
+        <label for="newCurrency">Change Currency:</label>
+        <select name="newCurrency" id="newCurrency">
+            <option value="USD" th:selected="${user.currency == 'USD'}">USD</option>
+            <option value="EUR" th:selected="${user.currency == 'EUR'}">EUR</option>
+            <option value="GBP" th:selected="${user.currency == 'GBP'}">GBP</option>
+            <option value="JPY" th:selected="${user.currency == 'JPY'}">JPY</option>
+            <!-- Add more currency options as needed -->
+        </select>
+        <button type="submit">Update Currency</button>
+    </form>
+    <p>Current Currency: <span th:text="${user.currency}">USD</span></p>
+</div>
 
 <h3>Spending Overview</h3>
 <form id="periodForm" th:action="@{/home}" method="get">
@@ -53,7 +67,7 @@
     <tr>
         <th>ID</th>
         <th>Date</th>
-        <th>Amount</th>
+        <th>Amount (<span th:text="${user.currency}"></span>)</th>
         <th>Category</th>
         <th>Description</th>
         <th>Type</th>

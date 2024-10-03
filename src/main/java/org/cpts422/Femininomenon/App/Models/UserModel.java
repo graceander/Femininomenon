@@ -16,6 +16,9 @@ public class UserModel {
     String firstName;
     String lastName;
 
+    @Column(name = "currency")
+    private String currency = "USD"; // Default currency
+
     @ElementCollection
     @CollectionTable(name = "user_spending_limits", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyEnumerated(EnumType.STRING)
@@ -83,9 +86,9 @@ public class UserModel {
         this.lastName = lastName;
     }
 
+    public String getCurrency() { return currency; }
 
-
-
+    public void setCurrency(String currency) { this.currency = currency; }
 
     // Equals and HashCode methods
     @Override
