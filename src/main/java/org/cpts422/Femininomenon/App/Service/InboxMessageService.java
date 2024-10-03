@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class InboxMessageService {
@@ -34,14 +36,17 @@ public class InboxMessageService {
         return inboxMessageRepository.findByUser(user);
     }
 
-    public void addMessage(UserModel user, String messageContent) {
-        // Check if a similar message already exists for this user within the last 24 hours
+    private void addMessage(UserModel user, String messageContent) {
+        System.out.println("Adding message for user " + user.getLogin() + ": " + messageContent);
         LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
         boolean messageExists = inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(user, messageContent, oneDayAgo);
 
         if (!messageExists) {
             InboxMessageModel newMessage = new InboxMessageModel(user, messageContent);
             inboxMessageRepository.save(newMessage);
+            System.out.println("New message added to inbox for user: " + user.getLogin());
+        } else {
+            System.out.println("Similar message already exists for user: " + user.getLogin() + ". Skipping.");
         }
     }
 
@@ -74,27 +79,45 @@ public class InboxMessageService {
             List<TransactionModel> transactions = transactionRepository.findByUserLoginAndDateBetween(
                     user.getLogin(), startDate, endDate);
 
-            double totalAmount = transactions.stream()
-                    .filter(t -> t.getCategory() == rule.getCategory())
+            Map<TransactionModel.CategoryType, Double> categorySpending = transactions.stream()
                     .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
-                    .mapToDouble(TransactionModel::getAmount)
-                    .sum();
+                    .collect(Collectors.groupingBy(
+                            TransactionModel::getCategory,
+                            Collectors.summingDouble(TransactionModel::getAmount)
+                    ));
 
-            if (rule.getRuleType() == UserRuleModel.RuleType.MAXIMUM_SPENDING && totalAmount > rule.getLimitAmount()) {
-                String message = String.format("Alert: You've exceeded your %s spending limit for %s. Spent: $%.2f, Limit: $%.2f",
-                        rule.getFrequency().toString().toLowerCase(), rule.getCategory(), totalAmount, rule.getLimitAmount());
-                addMessage(user, message);
-            } else if (rule.getRuleType() == UserRuleModel.RuleType.MINIMUM_SAVINGS) {
-                double savings = transactions.stream()
-                        .filter(t -> t.getType() == TransactionModel.TransactionType.INCOME)
-                        .mapToDouble(TransactionModel::getAmount)
-                        .sum() - totalAmount;
+            double ruleAmount = categorySpending.getOrDefault(rule.getCategory(), 0.0);
 
-                if (savings < rule.getLimitAmount()) {
-                    String message = String.format("Alert: Your %s savings for %s are below the target. Saved: $%.2f, Target: $%.2f",
-                            rule.getFrequency().toString().toLowerCase(), rule.getCategory(), savings, rule.getLimitAmount());
-                    addMessage(user, message);
-                }
+            switch (rule.getRuleType()) {
+                case MAXIMUM_SPENDING:
+                    if (ruleAmount > rule.getLimitAmount()) {
+                        String message = String.format("Alert: You've exceeded your %s spending limit for %s. Spent: $%.2f, Limit: $%.2f",
+                                rule.getFrequency().toString().toLowerCase(), rule.getCategory(), ruleAmount, rule.getLimitAmount());
+                        addMessage(user, message);
+                    }
+                    break;
+                case MINIMUM_SAVINGS:
+                    double totalIncome = transactions.stream()
+                            .filter(t -> t.getType() == TransactionModel.TransactionType.INCOME)
+                            .mapToDouble(TransactionModel::getAmount)
+                            .sum();
+                    double savings = totalIncome - ruleAmount;
+                    if (savings < rule.getLimitAmount()) {
+                        String message = String.format("Alert: Your %s savings for %s are below the target. Saved: $%.2f, Target: $%.2f",
+                                rule.getFrequency().toString().toLowerCase(), rule.getCategory(), savings, rule.getLimitAmount());
+                        addMessage(user, message);
+                    }
+                    break;
+                case NOT_EXCEED_CATEGORY:
+                    if (rule.getAdditionalCategory() != null) {
+                        double comparisonAmount = categorySpending.getOrDefault(rule.getAdditionalCategory(), 0.0);
+                        if (ruleAmount > comparisonAmount) {
+                            String message = String.format("Alert: Your spending in %s ($%.2f) has exceeded your spending in the prioritized category %s ($%.2f).",
+                                    rule.getCategory(), ruleAmount, rule.getAdditionalCategory(), comparisonAmount);
+                            addMessage(user, message);
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -113,6 +136,8 @@ public class InboxMessageService {
     }
 
     public void checkForOverallOverspending(UserModel user) {
+        System.out.println("Starting overspending check for user: " + user.getLogin());
+
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
@@ -121,7 +146,7 @@ public class InboxMessageService {
                 user.getLogin(), startOfMonth, endOfMonth);
 
         if (transactions.isEmpty()) {
-            System.out.println("No transactions found for user: " + user.getLogin());
+            System.out.println("No transactions found for user: " + user.getLogin() + " in the current month.");
             return; // Exit the method if there are no transactions
         }
 
@@ -137,10 +162,37 @@ public class InboxMessageService {
 
         System.out.println("User: " + user.getLogin() + ", Total Income: " + totalIncome + ", Total Expenses: " + totalExpenses);
 
-        if (totalExpenses > totalIncome && totalIncome > 0) {
-            String message = String.format("Alert: Your expenses ($%.2f) have exceeded your income ($%.2f) this month.",
-                    totalExpenses, totalIncome);
+        if (totalExpenses > totalIncome) {
+            String message;
+            if (totalIncome == 0) {
+                message = String.format("Alert: You have expenses ($%.2f) but no income recorded this month.", totalExpenses);
+            } else {
+                message = String.format("Alert: Your expenses ($%.2f) have exceeded your income ($%.2f) this month.",
+                        totalExpenses, totalIncome);
+            }
             addMessage(user, message);
+            System.out.println("Overspending alert created for user: " + user.getLogin());
+        } else {
+            System.out.println("No overspending detected for user: " + user.getLogin());
+        }
+
+        // Check for large individual expenses
+        double largestExpense = transactions.stream()
+                .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
+                .mapToDouble(TransactionModel::getAmount)
+                .max()
+                .orElse(0);
+
+        if (totalIncome > 0 && largestExpense > totalIncome * 0.5) {
+            String message = String.format("Alert: You have a large individual expense of $%.2f, which is more than 50%% of your monthly income.",
+                    largestExpense);
+            addMessage(user, message);
+            System.out.println("Large expense alert created for user: " + user.getLogin());
+        } else if (totalIncome == 0 && largestExpense > 0) {
+            String message = String.format("Alert: You have a large individual expense of $%.2f with no income recorded this month.",
+                    largestExpense);
+            addMessage(user, message);
+            System.out.println("Large expense alert created for user: " + user.getLogin());
         }
     }
 }
