@@ -3,9 +3,13 @@
 ## Project Description
 A personal budgeting app to track and store user's expenses and financial allotments, heavily themed and inspired by new pop sensation Chappell Roan. 
 
-Potential features include (but are not limited to):
-* Purchase Rounding - custom setting that allows users to round up their purchases to the next whole dollar and allocate the change to their choice of savings, donations, investments, etc.
-* Subscription Management - remind users of regular subscription services they are enrolled in to identify potential opportunities to save money
+Features:
+* Create Users
+* Add/Edit/Remove Transactions
+* Add Scheduled Transactions
+* Change Currency
+* Create personal budgeting rules
+* View notifications related to budgeting rules
 
 ------------------------
 ## Team Info
@@ -17,7 +21,7 @@ Potential features include (but are not limited to):
                 
 **Project Repository:** https://github.com/graceander/Femininomenon
 
-
+------------------------
 Steps to Run the Application
 
 Step 1. Clone the Repository
