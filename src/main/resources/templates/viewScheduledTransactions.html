@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<h3>Your Scheduled Transactions</h3>
+<form action="/addScheduledTransaction" method="get">
+  <input type="hidden" name="login" th:value="${user.login}">
+  <button type="submit">Create New Scheduled Transaction</button>
+</form>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Frequency</th>
+    <th>Most Recent Payment</th>
+    <th>Amount</th>
+    <th>Category</th>
+    <th>Description</th>
+    <th>Type</th>
+    <th>Account</th>
+    <th>Edit</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="scheduledTransaction : ${scheduledTransactions}">
+    <td th:text="${scheduledTransaction.id}">ID</td>
+    <td th:text="${scheduledTransaction.frequency}">Frequency</td>
+    <td th:text="${scheduledTransaction.recentPayment}">Most Recent Payment</td>
+    <td th:text="${scheduledTransaction.amount}">Amount</td>
+    <td th:text="${scheduledTransaction.category}">Category</td>
+    <td th:text="${scheduledTransaction.description}">Description</td>
+    <td th:text="${scheduledTransaction.type}">Type</td>
+    <td th:text="${scheduledTransaction.account}">Account</td>
+    <td>
+      <!-- Link to Edit Transaction page -->
+      <form action="/editScheduledTransaction" method="get">
+        <input type="hidden" name="id" th:value="${scheduledTransaction.id}">
+        <input type="hidden" name="login" th:value="${user.login}">
+        <button type="submit">⫶</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<br>
+<form action="/goHome" method="get">
+  <input type="hidden" name="login" th:value="${user.login}">
+  <button type="submit">Go Home</button>
+</form>
+</body>
+</html>
