@@ -1,12 +1,13 @@
 package org.cpts422.Femininomenon.App.Models;
 import jakarta.persistence.*;
-import java.math.BigDecimal;
+import jdk.jfr.Category;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "transactions_table")
-public class TransactionModel {
+@Table(name = "scheduled_transactions_table")
+public class ScheduledTransactionModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -15,18 +16,21 @@ public class TransactionModel {
     @JoinColumn(name = "user_id", nullable = false)
     UserModel user;
 
-    @Column(name = "date", nullable = false)
-    LocalDateTime date;
+    @Column(name = "frequency", nullable = false)
+    String frequency;
+
+    @Column(name = "recentPayment", nullable = false)
+    LocalDateTime recentPayment;
 
     @Column(name = "amount", nullable = false)
     float amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "category")
-    private CategoryType category;
-
     @Column(name = "description")
     String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    CategoryType category;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -50,20 +54,18 @@ public class TransactionModel {
         EXPENSE
     }
 
+    public ScheduledTransactionModel() {}
 
-    public TransactionModel() {}
-
-
-    public TransactionModel(UserModel user, LocalDateTime date, float amount, CategoryType category, String description, TransactionType type, String account) {
+    public ScheduledTransactionModel(UserModel user, String frequency, LocalDateTime recentPayment, float amount, CategoryType category, String description, TransactionType type, String account) {
         this.user = user;
-        this.date = date;
+        this.frequency = frequency;
+        this.recentPayment = recentPayment;
         this.amount = amount;
         this.category = category;
-        this.description = description;
+        this.description = "Scheduled Transaction: " + description;
         this.type = type;
         this.account = account;
     }
-
 
     public Long getId() {
         return id;
@@ -81,12 +83,20 @@ public class TransactionModel {
         this.user = user;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public String getFrequency() {
+        return frequency;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
+    public LocalDateTime getRecentPayment() {
+        return recentPayment;
+    }
+
+    public void setRecentPayment(LocalDateTime recentPayment) {
+        this.recentPayment = recentPayment;
     }
 
     public float getAmount() {
@@ -98,11 +108,11 @@ public class TransactionModel {
     }
 
     public CategoryType getCategory() {
-        return category; // Return the CategoryType enum
+        return category;
     }
 
     public void setCategory(CategoryType category) {
-        this.category = category; // Set the CategoryType enum
+        this.category = category;
     }
 
     public String getDescription() {
@@ -133,12 +143,13 @@ public class TransactionModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TransactionModel that = (TransactionModel) o;
-        return Float.compare(that.amount, amount) == 0 &&
-                Objects.equals(id, that.id) &&
+        ScheduledTransactionModel that = (ScheduledTransactionModel) o;
+        return Objects.equals(id, that.id) &&
                 Objects.equals(user, that.user) &&
-                Objects.equals(date, that.date) &&
-                category == that.category && // Check equality with enum
+                Objects.equals(frequency, that.frequency) &&
+                Objects.equals(recentPayment, that.recentPayment) &&
+                Objects.equals(amount, that.amount) &&
+                category == that.category &&
                 Objects.equals(description, that.description) &&
                 type == that.type &&
                 Objects.equals(account, that.account);
@@ -146,17 +157,18 @@ public class TransactionModel {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, date, amount, category, description, type, account);
+        return Objects.hash(id, user, frequency, recentPayment, amount, category, description, type, account);
     }
 
     @Override
     public String toString() {
-        return "Transaction{" +
+        return "ScheduledTransaction{" +
                 "id=" + id +
                 ", user=" + user +
-                ", date=" + date +
+                ", frequency=" + frequency +
+                ", recentPayment=" + recentPayment +
                 ", amount=" + amount +
-                ", category=" + category + // Display enum name
+                ", category='" + category + '\'' +
                 ", description='" + description + '\'' +
                 ", type=" + type +
                 ", account='" + account + '\'' +

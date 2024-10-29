@@ -29,6 +29,10 @@ public class UsersService {
         }
     }
 
+    public UserModel saveUser(UserModel user) {
+        return userRepository.save(user);
+    }
+
         public UserModel authenticateUser(String login, String password) {
         return userRepository.findByLoginAndPassword(login, password).orElse(null);
     }

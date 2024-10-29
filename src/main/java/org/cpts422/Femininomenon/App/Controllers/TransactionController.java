@@ -2,8 +2,10 @@ package org.cpts422.Femininomenon.App.Controllers;
 
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
+import org.cpts422.Femininomenon.App.Service.CurrencyConversionService;
 import org.cpts422.Femininomenon.App.Service.TransactionService;
 import org.cpts422.Femininomenon.App.Service.UsersService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,52 +14,77 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class TransactionController {
 
     private final TransactionService transactionService;
     private final UsersService usersService;
+    private final CurrencyConversionService currencyConversionService;
 
-    public TransactionController(TransactionService transactionService, UsersService usersService) {
+    @Autowired
+    public TransactionController(TransactionService transactionService, UsersService usersService, CurrencyConversionService currencyConversionService) {
         this.transactionService = transactionService;
         this.usersService = usersService;
+        this.currencyConversionService = currencyConversionService;
     }
+
     @GetMapping("/goHome")
     public String goHome(@RequestParam("login") String login, Model model) {
         return "redirect:/home?login=" + login;
     }
 
+    @PostMapping("/changeCurrency")
+    public String changeCurrency(@RequestParam("userLogin") String userLogin,
+                                 @RequestParam("newCurrency") String newCurrency) {
+        UserModel user = usersService.findByLogin(userLogin);
+        if (user != null) {
+            user.setCurrency(newCurrency);
+            usersService.saveUser(user);
+            System.out.println("Currency updated to " + newCurrency + " for user: " + userLogin);
+        } else {
+            System.out.println("User not found: " + userLogin);
+        }
+        return "redirect:/home?login=" + userLogin;
+    }
 
     @GetMapping("/home")
-    public String homePage(String login, Model model) {
+    public String homePage(@RequestParam("login") String login,
+                           @RequestParam(value = "period", defaultValue = "overall") String period,
+                           Model model) {
         UserModel user = usersService.findByLogin(login);
         if (user == null) {
             model.addAttribute("error", "User not found");
             return "error";
         }
-        List<TransactionModel> transactions = transactionService.getTransactionsByUser(user.getLogin());
 
-        if (transactions == null || transactions.isEmpty()) {
-            model.addAttribute("message", "No transactions found for this user.");
-        } else {
-            model.addAttribute("transactions", transactions);
-        }
+        Map<TransactionModel.CategoryType, Double> spendingByCategory = transactionService.getSpendingByCategory(login, period);
+        double totalSpending = transactionService.getTotalSpending(login, period);
+        List<TransactionModel> transactions = transactionService.getTransactionsByUser(login);
 
-        // Add spending data for the chart
-        LocalDateTime now = LocalDateTime.now();
-        int currentYear = now.getYear();
-        int currentMonth = now.getMonthValue();
+        // Convert amounts to user's currency
+        String userCurrency = user.getCurrency();
+        spendingByCategory = spendingByCategory.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> currencyConversionService.convert(e.getValue(), "USD", userCurrency)
+                ));
+        totalSpending = currencyConversionService.convert(totalSpending, "USD", userCurrency);
 
-        float totalSpending = transactionService.getTotalSpendingForMonth(login, currentYear, currentMonth);
-        Map<String, Float> spendingByCategory = transactionService.getSpendingByCategory(login, currentYear, currentMonth);
+        transactions.forEach(t -> t.setAmount(
+                (float) currencyConversionService.convert(t.getAmount(), "USD", userCurrency)
+        ));
 
-        model.addAttribute("totalSpending", totalSpending);
-        model.addAttribute("spendingByCategory", spendingByCategory);
         model.addAttribute("user", user);
+        model.addAttribute("spendingByCategory", spendingByCategory);
+        model.addAttribute("totalSpending", totalSpending);
+        model.addAttribute("selectedPeriod", period);
+        model.addAttribute("transactions", transactions);
 
         return "home";
     }
+
 
     @GetMapping("/addTransaction")
     public String AddTransactionPage( String login, Model model) {
@@ -78,7 +105,16 @@ public class TransactionController {
         {
             return "error";
         }
-        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, category, description, type, account);
+
+        TransactionModel.CategoryType categoryType;
+        try {
+            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            System.out.println("Invalid category: " + category);
+            return "error";
+        }
+        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, categoryType, description, type, account);
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
     }
@@ -120,9 +156,18 @@ public class TransactionController {
             return "error";
         }
 
+        TransactionModel.CategoryType categoryType;
+        try {
+            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            // Handle case where the category does not match any enum values
+            model.addAttribute("error", "Invalid category: " + category);
+            return "error";
+        }
+
         transaction.setDate(LocalDateTime.parse(date));
         transaction.setAmount(amount);
-        transaction.setCategory(category);
+        transaction.setCategory(categoryType);
         transaction.setDescription(description);
         transaction.setType(type);
         transaction.setAccount(account);
