@@ -1,8 +1,9 @@
 package org.cpts422.Femininomenon.App.Models;
-import jakarta.persistence.*;
-import org.cpts422.Femininomenon.App.Models.UserRuleModel;
 
-import java.util.*;
+
+import jakarta.persistence.*;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "users_table")
@@ -15,27 +16,6 @@ public class UserModel {
     String email;
     String firstName;
     String lastName;
-
-    @Column(name = "currency")
-    private String currency = "USD"; // Default currency
-
-    @ElementCollection
-    @CollectionTable(name = "user_spending_limits", joinColumns = @JoinColumn(name = "user_id"))
-    @MapKeyEnumerated(EnumType.STRING)
-    @Column(name = "spending_limit")
-    private Map<TransactionModel.CategoryType, Double> spendingLimits = new HashMap<>();
-
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserRuleModel> rules = new ArrayList<>();
-
-    public List<UserRuleModel> getRules() {
-        return rules;
-    }
-
-    public void setRules(List<UserRuleModel> rules) {
-        this.rules = rules;
-    }
 
 
     public Integer getId() {
@@ -86,9 +66,7 @@ public class UserModel {
         this.lastName = lastName;
     }
 
-    public String getCurrency() { return currency; }
 
-    public void setCurrency(String currency) { this.currency = currency; }
 
     // Equals and HashCode methods
     @Override
@@ -119,14 +97,6 @@ public class UserModel {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';
-    }
-
-    public Map<TransactionModel.CategoryType, Double> getSpendingLimits() {
-        return spendingLimits;
-    }
-
-    public void setSpendingLimit(TransactionModel.CategoryType category, Double limit) {
-        this.spendingLimits.put(category, limit);
     }
 
 }

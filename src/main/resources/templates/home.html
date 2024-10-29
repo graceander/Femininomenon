@@ -8,37 +8,14 @@
 <body>
 <h2>WELCOME TO FEMININOMENON, <span th:text="${user.login}"></span></h2>
 
-<div class="currency-form">
-    <form action="/changeCurrency" method="post">
-        <input type="hidden" name="userLogin" th:value="${user.login}">
-        <label for="newCurrency">Change Currency:</label>
-        <select name="newCurrency" id="newCurrency">
-            <option value="USD" th:selected="${user.currency == 'USD'}">USD</option>
-            <option value="EUR" th:selected="${user.currency == 'EUR'}">EUR</option>
-            <option value="GBP" th:selected="${user.currency == 'GBP'}">GBP</option>
-            <option value="JPY" th:selected="${user.currency == 'JPY'}">JPY</option>
-            <!-- Add more currency options as needed -->
-        </select>
-        <button type="submit">Update Currency</button>
-    </form>
-    <p>Current Currency: <span th:text="${user.currency}">USD</span></p>
+<div>
+    <img src="/more cats.jpg" alt="A cute cat" width="1200" height="800">
 </div>
 
 <h3>Spending Overview</h3>
-<form id="periodForm" th:action="@{/home}" method="get">
-    <input type="hidden" name="login" th:value="${user.login}">
-    <select name="period" onchange="this.form.submit()">
-        <option value="overall" th:selected="${selectedPeriod == 'overall'}">Overall</option>
-        <option value="day" th:selected="${selectedPeriod == 'day'}">Day</option>
-        <option value="week" th:selected="${selectedPeriod == 'week'}">Week</option>
-        <option value="month" th:selected="${selectedPeriod == 'month'}">Month</option>
-        <option value="year" th:selected="${selectedPeriod == 'year'}">Year</option>
-    </select>
-</form>
-
 <p>Total Spending: $<span th:text="${#numbers.formatDecimal(totalSpending, 1, 2)}"></span></p>
 
-<div th:if="${totalSpending == 0}">No expenses logged for this period.</div>
+<div th:if="${totalSpending == 0}">No expenses logged for this month.</div>
 <div th:unless="${totalSpending == 0}" style="width: 50%; margin: auto;">
     <canvas id="spendingChart"></canvas>
 </div>
@@ -48,26 +25,13 @@
     <input type="hidden" name="login" th:value="${user.login}">
     <button type="submit">Add Transaction</button>
 </form>
-<form action="/viewScheduledTransactions" method="get">
-    <input type="hidden" name="login" th:value="${user.login}">
-    <button type="submit">View Scheduled Transactions</button>
-</form>
-<form action="/user/rules/view" method="get">
-    <input type="hidden" name="userLogin" th:value="${user.login}">
-    <button type="submit">Add Rules</button>
-</form>
-<form action="/user/inbox/view" method="get">
-    <input type="hidden" name="userLogin" th:value="${user.login}">
-    <button type="submit">View Inbox</button>
-</form>
-
 
 <table border="1">
     <thead>
     <tr>
         <th>ID</th>
         <th>Date</th>
-        <th>Amount (<span th:text="${user.currency}"></span>)</th>
+        <th>Amount</th>
         <th>Category</th>
         <th>Description</th>
         <th>Type</th>
@@ -121,7 +85,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Spending by Category - ' + /*[[${selectedPeriod}]]*/ 'Overall'
+                    text: 'Spending by Category'
                 }
             }
         }

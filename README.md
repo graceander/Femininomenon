@@ -16,18 +16,3 @@ Potential features include (but are not limited to):
 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; Briana Weik (briana.weik@wsu.edu, WSU ID: 11774621)
                 
 **Project Repository:** https://github.com/graceander/Femininomenon
-
-
-Steps to Run the Application
-
-Step 1. Clone the Repository
-   To begin, clone the project repository from GitHub to your local machine:
-
-git clone HTTPS: https://github.com/graceander/Femininomenon.git
-cd Femininomenon
-
-Step 2. Build the Project
-   Navigate to the root directory of the project 
-
-Step 3. Run the Application
-http://localhost:8080
