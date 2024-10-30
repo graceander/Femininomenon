@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > ScheduledTransactionService</title>
+  <title>Coverage Report > UserController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.cpts422.Femininomenon.App.Service</a>
+    <a href="../index.html">org.cpts422.Femininomenon.App.Controllers</a>
 </div>
 
-<h1>Coverage Summary for Class: ScheduledTransactionService (org.cpts422.Femininomenon.App.Service)</h1>
+<h1>Coverage Summary for Class: UserController (org.cpts422.Femininomenon.App.Controllers)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -45,37 +45,37 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">ScheduledTransactionService</td>
+  <td class="name">UserController</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/10)
+    (5/5)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/30)
+    (4/4)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/68)
+    (23/23)
   </span>
 </td>
 </tr>
@@ -87,161 +87,69 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Service;
-&nbsp;import org.cpts422.Femininomenon.App.Models.TransactionModel;
-&nbsp;import org.cpts422.Femininomenon.App.Models.ScheduledTransactionModel;
-&nbsp;import org.cpts422.Femininomenon.App.Repository.ScheduledTransactionRepository;
-&nbsp;import org.cpts422.Femininomenon.App.Utils.BankHolidays;
-&nbsp;import org.springframework.stereotype.Service;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Controllers;
 &nbsp;
-&nbsp;import java.time.*;
-&nbsp;import java.util.ArrayList;
-&nbsp;import java.util.List;
-&nbsp;import java.util.Optional;
+&nbsp;import org.cpts422.Femininomenon.App.Models.UserModel;
+&nbsp;import org.cpts422.Femininomenon.App.Service.UsersService;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;import org.springframework.ui.Model;
+&nbsp;import org.springframework.web.bind.annotation.*;
 &nbsp;
+&nbsp;@Controller
+&nbsp;public class UserController {
+&nbsp;    private final UsersService usersService;
 &nbsp;
-&nbsp;@Service
-&nbsp;public class ScheduledTransactionService {
-&nbsp;
-&nbsp;    private final ScheduledTransactionRepository scheduledTransactionRepository;
-&nbsp;
-<b class="nc">&nbsp;    public ScheduledTransactionService(ScheduledTransactionRepository scheduledTransactionRepository) {</b>
-<b class="nc">&nbsp;        this.scheduledTransactionRepository = scheduledTransactionRepository;</b>
+<b class="fc">&nbsp;    public UserController(UsersService usersService) {</b>
+<b class="fc">&nbsp;        this.usersService = usersService;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public List&lt;ScheduledTransactionModel&gt; getTransactionsByUser(String login) {
-<b class="nc">&nbsp;        return scheduledTransactionRepository.findByUserLogin(login);</b>
+&nbsp;    @GetMapping(&quot;/register&quot;)
+&nbsp;    public String getRegisterPage(Model model) {
+<b class="fc">&nbsp;        model.addAttribute(&quot;registerRequest&quot;, new UserModel());</b>
+<b class="fc">&nbsp;        return &quot;register&quot;;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public void saveTransaction(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;        scheduledTransactionRepository.save(scheduledTransaction);</b>
-&nbsp;    }
+&nbsp;    @PostMapping(&quot;/register&quot;)
+&nbsp;    public String register(@ModelAttribute UserModel userModel) {
+<b class="fc">&nbsp;        UserModel registerNew = usersService.registerUser(</b>
+<b class="fc">&nbsp;                userModel.getFirstName(),</b>
+<b class="fc">&nbsp;                userModel.getLastName(),</b>
+<b class="fc">&nbsp;                userModel.getLogin(),</b>
+<b class="fc">&nbsp;                userModel.getPassword(),</b>
+<b class="fc">&nbsp;                userModel.getEmail()</b>
+&nbsp;        );
 &nbsp;
-&nbsp;    public void removeTransaction(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;        scheduledTransactionRepository.delete(scheduledTransaction);</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    // Method to get a scheduled transaction by ID
-&nbsp;    public ScheduledTransactionModel getTransactionById(Long id) {
-<b class="nc">&nbsp;        Optional&lt;ScheduledTransactionModel&gt; scheduledTransaction = scheduledTransactionRepository.findById(id);</b>
-<b class="nc">&nbsp;        return scheduledTransaction.orElse(null);</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    // Method to determine the date of the next scheduled payment
-&nbsp;    public LocalDateTime findNextPaymentDate(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;        String frequency = scheduledTransaction.getFrequency();</b>
-<b class="nc">&nbsp;        LocalDateTime recentPayment = scheduledTransaction.getRecentPayment();</b>
-<b class="nc">&nbsp;        if (frequency.equals(&quot;Monthly&quot;) || frequency.equals(&quot;Custom&quot;)) {</b>
-<b class="nc">&nbsp;            return recentPayment.plusMonths(1); // increments month</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (frequency.equals(&quot;Weekly&quot;)) {</b>
-<b class="nc">&nbsp;            return recentPayment.plusWeeks(1); // increments week by 1</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (frequency.equals(&quot;Biweekly&quot;)) {</b>
-<b class="nc">&nbsp;            return recentPayment.plusWeeks(2); // increments week by 2</b>
-&nbsp;        }
-&nbsp;        else {
-<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Illegal Argument: Invalid selection for scheduled payment frequency&quot;);</b>
+<b class="fc">&nbsp;        if (registerNew == null) {</b>
+<b class="fc">&nbsp;            return &quot;error&quot;;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return &quot;redirect:/&quot;;</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
-&nbsp;    public List&lt;TransactionModel&gt; onCreateScheduledTransaction(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;       List&lt;TransactionModel&gt; yearOfTransactions = new ArrayList&lt;&gt;();</b>
-<b class="nc">&nbsp;        LocalDateTime yearAhead = scheduledTransaction.getRecentPayment().plusYears(1);</b>
-<b class="nc">&nbsp;        while (scheduledTransaction.getRecentPayment().isBefore(yearAhead)) {</b>
-<b class="nc">&nbsp;            TransactionModel.TransactionType newTransactionType = convertScheduledTypeToTransactionType(scheduledTransaction);</b>
-<b class="nc">&nbsp;            TransactionModel.CategoryType newCategoryType = convertScheduledCategoryToTransactionCategory(scheduledTransaction);</b>
-<b class="nc">&nbsp;            LocalDateTime adjustedPaymentDate = BankHolidays.adjustForBankClosures(scheduledTransaction.getRecentPayment());</b>
-<b class="nc">&nbsp;            TransactionModel newTransaction = new TransactionModel(</b>
-<b class="nc">&nbsp;                    scheduledTransaction.getUser(),</b>
-&nbsp;                    adjustedPaymentDate,
-<b class="nc">&nbsp;                    scheduledTransaction.getAmount(),</b>
-&nbsp;                    newCategoryType,
-<b class="nc">&nbsp;                    scheduledTransaction.getDescription(),</b>
-&nbsp;                    newTransactionType,
-<b class="nc">&nbsp;                    scheduledTransaction.getAccount());</b>
-<b class="nc">&nbsp;            yearOfTransactions.add(newTransaction);</b>
-<b class="nc">&nbsp;            LocalDateTime nextPaymentDate = findNextPaymentDate(scheduledTransaction);</b>
-<b class="nc">&nbsp;            scheduledTransaction.setRecentPayment(nextPaymentDate);</b>
-&nbsp;        }
-&nbsp;
-<b class="nc">&nbsp;        return yearOfTransactions;</b>
+&nbsp;    @RequestMapping(&quot;/&quot;)
+&nbsp;    public String index(Model model) {
+<b class="fc">&nbsp;        model.addAttribute(&quot;loginRequest&quot;, new UserModel());</b>
+<b class="fc">&nbsp;        return &quot;index&quot;;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    // Method to convert ScheduledTransactionType to TransactionType
-&nbsp;    public TransactionModel.TransactionType convertScheduledTypeToTransactionType(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;        TransactionModel.TransactionType newTransactionType = null;</b>
-<b class="nc">&nbsp;        if (scheduledTransaction.getType() == ScheduledTransactionModel.TransactionType.INCOME) {</b>
-<b class="nc">&nbsp;            return TransactionModel.TransactionType.INCOME;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getType() == ScheduledTransactionModel.TransactionType.EXPENSE) {</b>
-<b class="nc">&nbsp;            return TransactionModel.TransactionType.EXPENSE;</b>
-&nbsp;        }
-&nbsp;        else {
-<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Illegal Argument: Invalid selection for scheduled transaction type&quot;);</b>
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public String login(@ModelAttribute UserModel userModel) {
+<b class="fc">&nbsp;        System.out.println(&quot;login request: &quot; + userModel);</b>
+<b class="fc">&nbsp;        UserModel authenticateTheUser = usersService.authenticateUser(userModel.getLogin(), userModel.getPassword());</b>
+<b class="fc">&nbsp;        System.out.println(authenticateTheUser);</b>
+<b class="fc">&nbsp;        if (authenticateTheUser == null) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Error&quot;);</b>
+<b class="fc">&nbsp;            return &quot;error&quot;;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            System.out.println(&quot;Login successful, redirecting to home.&quot;);</b>
+<b class="fc">&nbsp;            return &quot;redirect:/home?login=&quot; + userModel.getLogin();</b>
+&nbsp;
+&nbsp;
 &nbsp;        }
 &nbsp;    }
 &nbsp;
-&nbsp;    // Method to convert ScheduledTransactionCategory to TransactionCategory
-&nbsp;    public TransactionModel.CategoryType convertScheduledCategoryToTransactionCategory(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;        TransactionModel.CategoryType newTransactionCategory = null;</b>
-<b class="nc">&nbsp;        if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.ENTERTAINMENT) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.ENTERTAINMENT;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.GROCERIES) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.GROCERIES;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.OTHER) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.OTHER;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.HEALTHCARE) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.HEALTHCARE;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.SALARY) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.SALARY;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.TRANSPORTATION) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.TRANSPORTATION;</b>
-&nbsp;        }
-<b class="nc">&nbsp;        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.UTILITIES) {</b>
-<b class="nc">&nbsp;            return TransactionModel.CategoryType.UTILITIES;</b>
-&nbsp;        }
-&nbsp;        else {
-<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Illegal Argument: Invalid selection for scheduled category&quot;);</b>
-&nbsp;        }
-&nbsp;    }
 &nbsp;
-&nbsp;    // Method to create a new transaction using the scheduled information
-&nbsp;    public TransactionModel createTransaction(ScheduledTransactionModel scheduledTransaction) {
-<b class="nc">&nbsp;        LocalDateTime nextPaymentDate = findNextPaymentDate(scheduledTransaction);</b>
-<b class="nc">&nbsp;        LocalDateTime adjustedPaymentDate = BankHolidays.adjustForBankClosures(nextPaymentDate);</b>
-&nbsp;
-<b class="nc">&nbsp;        TransactionModel.TransactionType newTransactionType = convertScheduledTypeToTransactionType(scheduledTransaction);</b>
-<b class="nc">&nbsp;        TransactionModel.CategoryType newCategoryType = convertScheduledCategoryToTransactionCategory(scheduledTransaction);</b>
-&nbsp;
-<b class="nc">&nbsp;        TransactionModel newTransaction = new TransactionModel(</b>
-<b class="nc">&nbsp;                scheduledTransaction.getUser(),</b>
-&nbsp;                adjustedPaymentDate,
-<b class="nc">&nbsp;                scheduledTransaction.getAmount(),</b>
-&nbsp;                newCategoryType,
-<b class="nc">&nbsp;                scheduledTransaction.getDescription(),</b>
-&nbsp;                newTransactionType,
-<b class="nc">&nbsp;                scheduledTransaction.getAccount());</b>
-&nbsp;
-<b class="nc">&nbsp;        if (newTransaction != null) {</b>
-<b class="nc">&nbsp;            scheduledTransaction.setRecentPayment(nextPaymentDate);</b>
-<b class="nc">&nbsp;            return newTransaction;</b>
-&nbsp;        }
-&nbsp;        else {
-&nbsp;            try {
-<b class="nc">&nbsp;                throw new Exception(&quot;Error creating new transaction&quot;);</b>
-<b class="nc">&nbsp;            } catch (Exception e) {</b>
-<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
-&nbsp;            }
-&nbsp;        }
-&nbsp;    }
 &nbsp;}
-&nbsp;
 </code>
 </pre>
 </div>
@@ -265,7 +173,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 21:45</div>
+    <div style="float:right;">generated on 2024-10-29 21:58</div>
 </div>
 </body>
 </html>
