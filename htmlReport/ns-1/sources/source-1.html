@@ -44,26 +44,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">InboxMessageController</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/4)
+    (4/4)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/13)
+    (13/13)
   </span>
 </td>
 </tr>
@@ -96,33 +96,33 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private final UsersService usersService;
 &nbsp;
 &nbsp;    @Autowired
-<b class="nc">&nbsp;    public InboxMessageController(InboxMessageService inboxMessageService, UsersService usersService) {</b>
-<b class="nc">&nbsp;        this.inboxMessageService = inboxMessageService;</b>
-<b class="nc">&nbsp;        this.usersService = usersService;</b>
+<b class="fc">&nbsp;    public InboxMessageController(InboxMessageService inboxMessageService, UsersService usersService) {</b>
+<b class="fc">&nbsp;        this.inboxMessageService = inboxMessageService;</b>
+<b class="fc">&nbsp;        this.usersService = usersService;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @GetMapping(&quot;/view&quot;)
 &nbsp;    public String viewInbox(@RequestParam(&quot;userLogin&quot;) String userLogin, Model model) {
-<b class="nc">&nbsp;        UserModel user = usersService.findByLogin(userLogin);</b>
-<b class="nc">&nbsp;        List&lt;InboxMessageModel&gt; messages = inboxMessageService.getInboxMessages(user);</b>
+<b class="fc">&nbsp;        UserModel user = usersService.findByLogin(userLogin);</b>
+<b class="fc">&nbsp;        List&lt;InboxMessageModel&gt; messages = inboxMessageService.getInboxMessages(user);</b>
 &nbsp;
-<b class="nc">&nbsp;        model.addAttribute(&quot;messages&quot;, messages);</b>
-<b class="nc">&nbsp;        model.addAttribute(&quot;userLogin&quot;, userLogin);</b>
-<b class="nc">&nbsp;        return &quot;userInbox&quot;;</b>
+<b class="fc">&nbsp;        model.addAttribute(&quot;messages&quot;, messages);</b>
+<b class="fc">&nbsp;        model.addAttribute(&quot;userLogin&quot;, userLogin);</b>
+<b class="fc">&nbsp;        return &quot;userInbox&quot;;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @PostMapping(&quot;/markAsRead/{messageId}&quot;)
 &nbsp;    public String markMessageAsRead(@PathVariable Long messageId, @RequestParam(&quot;userLogin&quot;) String userLogin) {
-<b class="nc">&nbsp;        inboxMessageService.markMessageAsRead(messageId);</b>
-<b class="nc">&nbsp;        return &quot;redirect:/user/inbox/view?userLogin=&quot; + userLogin;</b>
+<b class="fc">&nbsp;        inboxMessageService.markMessageAsRead(messageId);</b>
+<b class="fc">&nbsp;        return &quot;redirect:/user/inbox/view?userLogin=&quot; + userLogin;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
 &nbsp;    @PostMapping(&quot;/markAllAsRead&quot;)
 &nbsp;    public String markAllMessagesAsRead(@RequestParam(&quot;userLogin&quot;) String userLogin) {
-<b class="nc">&nbsp;        UserModel user = usersService.findByLogin(userLogin);</b>
-<b class="nc">&nbsp;        inboxMessageService.markAllMessagesAsRead(user);</b>
-<b class="nc">&nbsp;        return &quot;redirect:/user/inbox/view?userLogin=&quot; + userLogin;</b>
+<b class="fc">&nbsp;        UserModel user = usersService.findByLogin(userLogin);</b>
+<b class="fc">&nbsp;        inboxMessageService.markAllMessagesAsRead(user);</b>
+<b class="fc">&nbsp;        return &quot;redirect:/user/inbox/view?userLogin=&quot; + userLogin;</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -148,7 +148,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 16:18</div>
+    <div style="float:right;">generated on 2024-10-29 18:54</div>
 </div>
 </body>
 </html>
