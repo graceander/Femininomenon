@@ -67,22 +67,33 @@ public class BankHolidayTest {
 
     @Nested
     class testFindSpecificHoliday {
-        // test with starting date beginning of month
-        @Test
-        void testBeginningOfMonth() {
-
+        // stream object to be used in parameterized tests for validating AdjustForBankClosures
+        // contains a collection of holidays that are based on week numbers
+        // Object contains: expected LocalTimeDate, starting day number for function, the day of the week, and the num week offset
+        static Stream<Object[]> weekBasedHolidays() {
+            return Stream.of(
+                    new Object[]{LocalDateTime.of(2024, Month.JANUARY, 15, 0, 0), 1, DayOfWeek.MONDAY, 2},
+                    new Object[]{LocalDateTime.of(2024, Month.FEBRUARY, 19, 0, 0), 1, DayOfWeek.MONDAY, 2},
+                    new Object[]{LocalDateTime.of(2024, Month.MAY, 27, 0, 0), 31, DayOfWeek.MONDAY, 0},
+                    new Object[]{LocalDateTime.of(2024, Month.SEPTEMBER, 2, 0, 0), 1, DayOfWeek.MONDAY, 0},
+                    new Object[]{LocalDateTime.of(2024, Month.OCTOBER, 14, 0, 0), 1, DayOfWeek.MONDAY, 1},
+                    new Object[]{LocalDateTime.of(2024, Month.NOVEMBER, 28, 0, 0), 1, DayOfWeek.THURSDAY, 3}
+            );
         }
 
-        // test with starting date end of month
-        @Test
-        void testEndOfMonth() {
-
+        // test with starting date beginning of month
+        @ParameterizedTest
+        @MethodSource("weekBasedHolidays")
+        void testAllHolidays(LocalDateTime weekBasedHoliday, int startDay, DayOfWeek weekDay, int weekOffset) {
+            LocalDateTime startingDay = LocalDateTime.of(weekBasedHoliday.getYear(), weekBasedHoliday.getMonth(), startDay, 0, 0, 0);
+            assertEquals(weekBasedHoliday, BankHolidays.findSpecificHoliday(startingDay, weekDay, weekOffset));
         }
 
         // test with invalid start date
         @Test
         void testInvalidStartDate() {
-
+            LocalDateTime invalidStartDate = LocalDateTime.of(2024, Month.JANUARY, 15, 0, 0);
+            assertThrows(IllegalArgumentException.class, () -> BankHolidays.findSpecificHoliday(invalidStartDate, DayOfWeek.MONDAY, 1));
         }
     }
 
