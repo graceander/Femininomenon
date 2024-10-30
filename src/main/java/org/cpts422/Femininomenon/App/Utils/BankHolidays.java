@@ -10,6 +10,10 @@ public class BankHolidays {
 
     // Method to generate the list of bank holidays for a given year
     public static List<LocalDateTime> getListOfBankHolidays(int year) {
+        if (year < 1582) {
+            throw new IllegalArgumentException("The year must be after 1582, the start of the current calendar format");
+        }
+
         List<LocalDateTime> bankHolidays = new ArrayList<>();
         // add dates that are always the same number
         bankHolidays.add(LocalDateTime.of(year, Month.JANUARY, 1, 0, 0)); // New Year 1/1
