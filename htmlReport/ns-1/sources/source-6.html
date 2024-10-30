@@ -48,34 +48,34 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">UsersService</td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (1/1)
+    (0/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (5/5)
+    (0/5)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (4/4)
+    (0/4)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (16/16)
+    (0/16)
   </span>
 </td>
 </tr>
@@ -98,36 +98,36 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    private final UserRepository userRepository;
 &nbsp;
-<b class="fc">&nbsp;    public UsersService(UserRepository userRepository) {</b>
-<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+<b class="nc">&nbsp;    public UsersService(UserRepository userRepository) {</b>
+<b class="nc">&nbsp;        this.userRepository = userRepository;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public UserModel registerUser(String firstName, String lastName, String login, String password, String email) {
-<b class="fc">&nbsp;        if (login != null &amp;&amp; password != null) {</b>
-<b class="fc">&nbsp;            UserModel usersModel = new UserModel();</b>
-<b class="fc">&nbsp;            usersModel.setFirstName(firstName);</b>
-<b class="fc">&nbsp;            usersModel.setLastName(lastName);</b>
-<b class="fc">&nbsp;            usersModel.setLogin(login);</b>
-<b class="fc">&nbsp;            usersModel.setPassword(password);</b>
-<b class="fc">&nbsp;            usersModel.setEmail(email);</b>
-<b class="fc">&nbsp;            UserModel savedUser = userRepository.save(usersModel);</b>
-<b class="fc">&nbsp;            System.out.println(&quot;User registered: &quot; + savedUser);</b>
-<b class="fc">&nbsp;            return savedUser;</b>
+<b class="nc">&nbsp;        if (login != null &amp;&amp; password != null) {</b>
+<b class="nc">&nbsp;            UserModel usersModel = new UserModel();</b>
+<b class="nc">&nbsp;            usersModel.setFirstName(firstName);</b>
+<b class="nc">&nbsp;            usersModel.setLastName(lastName);</b>
+<b class="nc">&nbsp;            usersModel.setLogin(login);</b>
+<b class="nc">&nbsp;            usersModel.setPassword(password);</b>
+<b class="nc">&nbsp;            usersModel.setEmail(email);</b>
+<b class="nc">&nbsp;            UserModel savedUser = userRepository.save(usersModel);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;User registered: &quot; + savedUser);</b>
+<b class="nc">&nbsp;            return savedUser;</b>
 &nbsp;        } else {
-<b class="fc">&nbsp;            return null;</b>
+<b class="nc">&nbsp;            return null;</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    public UserModel saveUser(UserModel user) {
-<b class="fc">&nbsp;        return userRepository.save(user);</b>
+<b class="nc">&nbsp;        return userRepository.save(user);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;        public UserModel authenticateUser(String login, String password) {
-<b class="fc">&nbsp;        return userRepository.findByLoginAndPassword(login, password).orElse(null);</b>
+<b class="nc">&nbsp;        return userRepository.findByLoginAndPassword(login, password).orElse(null);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public UserModel findByLogin(String login) {
-<b class="fc">&nbsp;        return userRepository.findByLogin(login).orElse(null);</b>
+<b class="nc">&nbsp;        return userRepository.findByLogin(login).orElse(null);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;}
@@ -154,7 +154,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 21:45</div>
+    <div style="float:right;">generated on 2024-10-30 14:57</div>
 </div>
 </body>
 </html>

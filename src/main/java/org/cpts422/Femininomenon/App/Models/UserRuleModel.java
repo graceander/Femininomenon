@@ -36,7 +36,7 @@ public class UserRuleModel {
     TransactionModel.CategoryType additionalCategory;
 
     public enum Frequency {
-        DAILY, WEEKLY, MONTHLY
+        DAILY, WEEKLY, MONTHLY, YEARLY
     }
 
     public enum RuleType {
