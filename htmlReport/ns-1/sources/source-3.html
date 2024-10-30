@@ -75,7 +75,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/79)
+    (0/76)
   </span>
 </td>
 </tr>
@@ -196,13 +196,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        }
 &nbsp;
 &nbsp;        TransactionModel.CategoryType categoryType;
-&nbsp;        try {
-<b class="nc">&nbsp;            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(&quot; &quot;, &quot;_&quot;));</b>
-<b class="nc">&nbsp;        } catch (IllegalArgumentException e) {</b>
-&nbsp;            // Handle case where the category does not match any enum values
-<b class="nc">&nbsp;            System.out.println(&quot;Invalid category: &quot; + category);</b>
-<b class="nc">&nbsp;            return &quot;error&quot;;</b>
-&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(&quot; &quot;, &quot;_&quot;));</b>
+&nbsp;
 <b class="nc">&nbsp;        TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, categoryType, description, type, account);</b>
 <b class="nc">&nbsp;        transactionService.saveTransaction(newTransaction);</b>
 <b class="nc">&nbsp;        return &quot;redirect:/home?login=&quot; + login;</b>
@@ -241,7 +237,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        // get the transaction ID
 <b class="nc">&nbsp;        TransactionModel transaction = transactionService.getTransactionById(id);</b>
 <b class="nc">&nbsp;        if (transaction == null || !transaction.getUser().getLogin().equals(login)) {</b>
-<b class="nc">&nbsp;            model.addAttribute(&quot;error&quot;, &quot;Transaction noes not belong to the user&quot;);</b>
+<b class="nc">&nbsp;            model.addAttribute(&quot;error&quot;, &quot;Transaction does not belong to the user&quot;);</b>
 <b class="nc">&nbsp;            return &quot;error&quot;;</b>
 &nbsp;        }
 &nbsp;
@@ -294,7 +290,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 18:54</div>
+    <div style="float:right;">generated on 2024-10-29 21:05</div>
 </div>
 </body>
 </html>

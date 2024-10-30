@@ -48,34 +48,34 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">UserRuleController</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/3)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/2)
+    (2/2)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/13)
+    (13/13)
   </span>
 </td>
 </tr>
@@ -107,17 +107,17 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private final UsersService usersService;
 &nbsp;
 &nbsp;    @Autowired
-<b class="nc">&nbsp;    public UserRuleController(UserRuleService userRuleService, UsersService usersService) {</b>
-<b class="nc">&nbsp;        this.userRuleService = userRuleService;</b>
-<b class="nc">&nbsp;        this.usersService = usersService;</b>
+<b class="fc">&nbsp;    public UserRuleController(UserRuleService userRuleService, UsersService usersService) {</b>
+<b class="fc">&nbsp;        this.userRuleService = userRuleService;</b>
+<b class="fc">&nbsp;        this.usersService = usersService;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @GetMapping(&quot;/view&quot;)
 &nbsp;    public String viewRules(@RequestParam(&quot;userLogin&quot;) String userLogin, Model model) {
-<b class="nc">&nbsp;        List&lt;UserRuleModel&gt; rules = userRuleService.getRulesByUserLogin(userLogin);</b>
-<b class="nc">&nbsp;        model.addAttribute(&quot;rules&quot;, rules);</b>
-<b class="nc">&nbsp;        model.addAttribute(&quot;userLogin&quot;, userLogin);</b>
-<b class="nc">&nbsp;        return &quot;userAddRules&quot;;</b>
+<b class="fc">&nbsp;        List&lt;UserRuleModel&gt; rules = userRuleService.getRulesByUserLogin(userLogin);</b>
+<b class="fc">&nbsp;        model.addAttribute(&quot;rules&quot;, rules);</b>
+<b class="fc">&nbsp;        model.addAttribute(&quot;userLogin&quot;, userLogin);</b>
+<b class="fc">&nbsp;        return &quot;userAddRules&quot;;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @PostMapping(&quot;/add&quot;)
@@ -128,18 +128,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                          @RequestParam(&quot;ruleType&quot;) UserRuleModel.RuleType ruleType,
 &nbsp;                          @RequestParam(value = &quot;extraCategory&quot;, required = false) TransactionModel.CategoryType extraCategory) {
 &nbsp;
-<b class="nc">&nbsp;        UserModel user = usersService.findByLogin(userLogin);</b>
+<b class="fc">&nbsp;        UserModel user = usersService.findByLogin(userLogin);</b>
 &nbsp;
 &nbsp;        UserRuleModel newRule;
-<b class="nc">&nbsp;        if (ruleType == UserRuleModel.RuleType.NOT_EXCEED_CATEGORY) {</b>
-<b class="nc">&nbsp;            newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType, extraCategory);</b>
+<b class="fc">&nbsp;        if (ruleType == UserRuleModel.RuleType.NOT_EXCEED_CATEGORY) {</b>
+<b class="fc">&nbsp;            newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType, extraCategory);</b>
 &nbsp;        } else {
-<b class="nc">&nbsp;            newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType, null);</b>
+<b class="fc">&nbsp;            newRule = new UserRuleModel(user, category, limitAmount, frequency, ruleType, null);</b>
 &nbsp;        }
 &nbsp;
-<b class="nc">&nbsp;        userRuleService.saveRule(newRule);</b>
+<b class="fc">&nbsp;        userRuleService.saveRule(newRule);</b>
 &nbsp;
-<b class="nc">&nbsp;        return &quot;redirect:/home?login=&quot; + userLogin;</b>
+<b class="fc">&nbsp;        return &quot;redirect:/home?login=&quot; + userLogin;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
@@ -171,7 +171,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 18:54</div>
+    <div style="float:right;">generated on 2024-10-29 21:05</div>
 </div>
 </body>
 </html>
