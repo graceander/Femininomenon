@@ -107,13 +107,9 @@ public class TransactionController {
         }
 
         TransactionModel.CategoryType categoryType;
-        try {
-            categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
-        } catch (IllegalArgumentException e) {
-            // Handle case where the category does not match any enum values
-            System.out.println("Invalid category: " + category);
-            return "error";
-        }
+
+        categoryType = TransactionModel.CategoryType.valueOf(category.toUpperCase().replace(" ", "_"));
+
         TransactionModel newTransaction = new TransactionModel(user, LocalDateTime.now(), amount, categoryType, description, type, account);
         transactionService.saveTransaction(newTransaction);
         return "redirect:/home?login=" + login;
@@ -152,7 +148,7 @@ public class TransactionController {
         // get the transaction ID
         TransactionModel transaction = transactionService.getTransactionById(id);
         if (transaction == null || !transaction.getUser().getLogin().equals(login)) {
-            model.addAttribute("error", "Transaction noes not belong to the user");
+            model.addAttribute("error", "Transaction does not belong to the user");
             return "error";
         }
 
