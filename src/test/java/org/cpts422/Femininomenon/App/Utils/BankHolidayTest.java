@@ -113,7 +113,7 @@ public class BankHolidayTest {
                     LocalDateTime.of(2024, Month.MAY, 27, 0, 0),
                     LocalDateTime.of(2024, Month.JUNE, 19, 0, 0),
                     LocalDateTime.of(2024, Month.JULY, 4, 0, 0),
-                    LocalDateTime.of(2024, Month.SEPTEMBER, 1,0,0),
+                    LocalDateTime.of(2024, Month.SEPTEMBER, 2,0,0),
                     LocalDateTime.of(2024, Month.OCTOBER, 14, 0, 0),
                     LocalDateTime.of(2024, Month.NOVEMBER, 11, 0,0),
                     LocalDateTime.of(2024, Month.NOVEMBER, 28, 0, 0),
@@ -155,12 +155,6 @@ public class BankHolidayTest {
             else {
                 assertEquals(holiday.plusDays(1), BankHolidays.adjustForBankClosures(holiday));
             }
-        }
-
-        // test handling invalid days
-        @Test
-        void testInvalidDay() {
-
         }
     }
 }
