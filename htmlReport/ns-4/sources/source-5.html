@@ -44,26 +44,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">UserRuleService</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/3)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/4)
+    (4/4)
   </span>
 </td>
 </tr>
@@ -89,16 +89,16 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private final UserRuleRepository userRuleRepository;
 &nbsp;
 &nbsp;    @Autowired
-<b class="nc">&nbsp;    public UserRuleService(UserRuleRepository userRuleRepository) {</b>
-<b class="nc">&nbsp;        this.userRuleRepository = userRuleRepository;</b>
+<b class="fc">&nbsp;    public UserRuleService(UserRuleRepository userRuleRepository) {</b>
+<b class="fc">&nbsp;        this.userRuleRepository = userRuleRepository;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;UserRuleModel&gt; getRulesByUserLogin(String userLogin) {
-<b class="nc">&nbsp;        return userRuleRepository.findByUserLogin(userLogin);</b>
+<b class="fc">&nbsp;        return userRuleRepository.findByUserLogin(userLogin);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void saveRule(UserRuleModel rule) {
-<b class="nc">&nbsp;        userRuleRepository.save(rule);</b>
+<b class="fc">&nbsp;        userRuleRepository.save(rule);</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -124,7 +124,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 21:53</div>
+    <div style="float:right;">generated on 2024-10-30 20:22</div>
 </div>
 </body>
 </html>

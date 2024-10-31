@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > UserRepository</title>
+  <title>Coverage Report > CurrencyConversionService</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,28 +19,67 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.cpts422.Femininomenon.App.Repository</a>
+    <a href="../index.html">org.cpts422.Femininomenon.App.Service</a>
 </div>
 
-<h1>Coverage Summary for Class: UserRepository (org.cpts422.Femininomenon.App.Repository)</h1>
+<h1>Coverage Summary for Class: CurrencyConversionService (org.cpts422.Femininomenon.App.Service)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
 </tr>
-  <tr>
-    <td class="name">UserRepository$MockitoMock$CtrNK65k</td>
-  </tr>
-  <tr>
-    <td class="name">UserRepository$MockitoMock$CtrNK65k$auxiliary$l0gz5MsX</td>
-  </tr>
-  <tr>
-    <td class="name">UserRepository$MockitoMock$CtrNK65k$auxiliary$oDwyPvNP</td>
-  </tr>
 <tr>
-  <td class="name"><strong>Total</strong></td>
+  <td class="name">CurrencyConversionService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
 </tr>
+
 </table>
 
 <br/>
@@ -48,15 +87,35 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Repository;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Service;
 &nbsp;
-&nbsp;import org.cpts422.Femininomenon.App.Models.UserModel;
-&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
-&nbsp;import java.util.Optional;
+&nbsp;import org.springframework.stereotype.Service;
 &nbsp;
-&nbsp;public interface UserRepository extends JpaRepository&lt;UserModel, Integer&gt; {
-&nbsp;    Optional&lt;UserModel&gt; findByLoginAndPassword(String login, String password);
-&nbsp;    Optional&lt;UserModel&gt; findByLogin(String login);
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class CurrencyConversionService {
+&nbsp;    private final Map&lt;String, Double&gt; exchangeRates;
+&nbsp;
+<b class="fc">&nbsp;    public CurrencyConversionService() {</b>
+<b class="fc">&nbsp;        exchangeRates = new HashMap&lt;&gt;();</b>
+&nbsp;        // Exchange rates relative to USD (as of a certain date)
+<b class="fc">&nbsp;        exchangeRates.put(&quot;USD&quot;, 1.0);</b>
+<b class="fc">&nbsp;        exchangeRates.put(&quot;EUR&quot;, 0.85);</b>
+<b class="fc">&nbsp;        exchangeRates.put(&quot;GBP&quot;, 0.73);</b>
+<b class="fc">&nbsp;        exchangeRates.put(&quot;JPY&quot;, 110.0);</b>
+&nbsp;        // Add more currencies as needed
+&nbsp;    }
+&nbsp;
+&nbsp;    public double convert(double amount, String fromCurrency, String toCurrency) {
+<b class="fc">&nbsp;        if (!exchangeRates.containsKey(fromCurrency) || !exchangeRates.containsKey(toCurrency)) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Unsupported currency&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double fromRate = exchangeRates.get(fromCurrency);</b>
+<b class="fc">&nbsp;        double toRate = exchangeRates.get(toCurrency);</b>
+<b class="fc">&nbsp;        return amount * (toRate / fromRate);</b>
+&nbsp;    }
 &nbsp;}
 </code>
 </pre>
@@ -81,7 +140,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-30 18:23</div>
+    <div style="float:right;">generated on 2024-10-30 20:22</div>
 </div>
 </body>
 </html>
