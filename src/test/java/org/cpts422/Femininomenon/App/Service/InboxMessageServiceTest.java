@@ -254,17 +254,50 @@ class InboxMessageServiceTest {
     }
 
     @Test
-    void getStartDate_ShouldHandleUnsupportedFrequency() throws Exception {
-        Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
-                LocalDateTime.class, UserRuleModel.Frequency.class);
-        getStartDateMethod.setAccessible(true);
+    void getStartDate_ShouldHandleUnsupportedFrequency() {
+        // Get the private getStartDate method
+        Method getStartDateMethod;
+        try {
+            getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
+                    LocalDateTime.class, UserRuleModel.Frequency.class);
+            getStartDateMethod.setAccessible(true);
 
-        LocalDateTime now = LocalDateTime.now();
-        Exception exception = assertThrows(Exception.class,
-                () -> getStartDateMethod.invoke(inboxMessageService, now, null));
+            // Test with YEARLY frequency
+            Exception exception = assertThrows(IllegalArgumentException.class,
+                    () -> getStartDateMethod.invoke(inboxMessageService, LocalDateTime.now(), UserRuleModel.Frequency.YEARLY));
 
-        assertTrue(exception.getCause() instanceof IllegalArgumentException);
-        assertEquals("Frequency cannot be null", exception.getCause().getMessage());
+            assertTrue(exception.getCause().getMessage().contains("Unsupported frequency type"));
+        } catch (Exception e) {
+            fail("Test setup failed: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void checkSpendingRules_ShouldSkipRuleWhenFrequencyNotSupported() {
+        // Set up a rule with monthly frequency first to ensure basic setup works
+        testRule.setRuleType(UserRuleModel.RuleType.MAXIMUM_SPENDING);
+        testRule.setFrequency(UserRuleModel.Frequency.MONTHLY);
+        testRule.setCategory(TransactionModel.CategoryType.GROCERIES);
+        testRule.setLimitAmount(1000.0F);
+
+        UserRuleModel yearlyRule = new UserRuleModel();
+        yearlyRule.setRuleType(UserRuleModel.RuleType.MAXIMUM_SPENDING);
+        yearlyRule.setFrequency(UserRuleModel.Frequency.YEARLY);
+        yearlyRule.setCategory(TransactionModel.CategoryType.GROCERIES);
+        yearlyRule.setLimitAmount(1000.0F);
+
+        // Return both rules
+        when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
+                .thenReturn(Arrays.asList(testRule, yearlyRule));
+
+        testExpense.setAmount(1500.0F);
+        setupTransactionMock(Collections.singletonList(testExpense));
+
+        // Should process the monthly rule but skip the yearly rule
+        inboxMessageService.checkSpendingRules(testUser);
+
+        // Verify that only one message was created (for the monthly rule)
+        verify(inboxMessageRepository, times(1)).save(any());
     }
 
     @Test
@@ -356,6 +389,61 @@ class InboxMessageServiceTest {
         inboxMessageService.checkSpendingRules(testUser);
 
         verify(inboxMessageRepository, never()).save(any());
+    }
+
+    @Test
+    void checkForOverallOverspending_ShouldHandleZeroIncomeWithMultipleExpenses() {
+        // Create multiple expense transactions but no income transactions
+        TransactionModel expense1 = new TransactionModel();
+        expense1.setType(TransactionModel.TransactionType.EXPENSE);
+        expense1.setAmount(100.0F);
+
+        TransactionModel expense2 = new TransactionModel();
+        expense2.setType(TransactionModel.TransactionType.EXPENSE);
+        expense2.setAmount(200.0F);
+
+        when(transactionRepository.findByUserLoginAndDateBetween(
+                eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Arrays.asList(expense1, expense2));
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        inboxMessageService.checkForOverallOverspending(testUser);
+
+        // Capture all messages
+        verify(inboxMessageRepository, times(2)).save(messageCaptor.capture());
+        List<InboxMessageModel> messages = messageCaptor.getAllValues();
+
+        // Verify both types of messages are created
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("no income recorded this month")));
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("large individual expense")));
+    }
+
+    @Test
+    void checkForOverallOverspending_ShouldCreateAllAlertsForZeroIncome() {
+        // Set up a single expense with no income
+        testExpense.setAmount(500.0F);
+        when(transactionRepository.findByUserLoginAndDateBetween(
+                eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Collections.singletonList(testExpense));
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        inboxMessageService.checkForOverallOverspending(testUser);
+
+        // Verify both messages are created
+        verify(inboxMessageRepository, times(2)).save(messageCaptor.capture());
+        List<InboxMessageModel> messages = messageCaptor.getAllValues();
+
+        // Check specific message contents
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("no income recorded this month")));
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("large individual expense")));
     }
 
     @Test
@@ -708,5 +796,144 @@ class InboxMessageServiceTest {
             // Verify appropriate action was taken
             verify(inboxMessageRepository, atLeastOnce()).save(any());
         }
+    }
+
+//    @Test
+//    void checkSpendingRules_ShouldHandleInvalidRuleType() {
+//        // Create a custom rule type using reflection to simulate an invalid rule type
+//        try {
+//            // Create a new rule with a "null" rule type
+//            testRule.setRuleType(null);
+//            when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
+//                    .thenReturn(Collections.singletonList(testRule));
+//
+//            // Set up basic transaction
+//            testExpense.setAmount(1500.0F);
+//            setupTransactionMock(Collections.singletonList(testExpense));
+//
+//            // Execute method - should handle null rule type gracefully
+//            inboxMessageService.checkSpendingRules(testUser);
+//
+//            // Verify no message was created since the rule type was invalid
+//            verify(inboxMessageRepository, never()).save(any());
+//        } catch (Exception e) {
+//            fail("Should handle invalid rule type gracefully");
+//        }
+//    }
+
+    @Test
+    void checkForOverallOverspending_ShouldHandleZeroIncomeWithPositiveLargeExpense() {
+        // Create a transaction list with zero income and a positive large expense
+        TransactionModel zeroIncome = new TransactionModel();
+        zeroIncome.setType(TransactionModel.TransactionType.INCOME);
+        zeroIncome.setAmount(0.0F);  // Explicitly set to zero
+
+        TransactionModel largeExpense = new TransactionModel();
+        largeExpense.setType(TransactionModel.TransactionType.EXPENSE);
+        largeExpense.setAmount(1000.0F);  // Set a significant positive amount
+
+        // Setup the mock to return our test transactions
+        when(transactionRepository.findByUserLoginAndDateBetween(
+                eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Arrays.asList(zeroIncome, largeExpense));
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        // Execute the method
+        inboxMessageService.checkForOverallOverspending(testUser);
+
+        // Verify both messages were created
+        verify(inboxMessageRepository, times(2)).save(messageCaptor.capture());
+        List<InboxMessageModel> messages = messageCaptor.getAllValues();
+
+        // Verify the specific message for zero income with large expense was created
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("no income recorded this month")));
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("large individual expense")));
+    }
+
+    @Test
+    void checkSpendingRules_ShouldHandleDefaultCaseInSwitch() {
+        // Create a custom rule with YEARLY frequency (which isn't handled in the switch)
+        testRule.setRuleType(UserRuleModel.RuleType.MAXIMUM_SPENDING);
+        testRule.setFrequency(UserRuleModel.Frequency.YEARLY);  // This frequency isn't handled in the switch
+        when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
+                .thenReturn(Collections.singletonList(testRule));
+
+        testExpense.setAmount(1500.0F);
+        setupTransactionMock(Collections.singletonList(testExpense));
+
+        // This should trigger the default case in the switch
+        inboxMessageService.checkSpendingRules(testUser);
+
+        // Verify no message was created since the frequency wasn't handled
+        verify(inboxMessageRepository, never()).save(any());
+    }
+
+    @Test
+    void checkForOverallOverspending_ShouldHandleExactlyZeroIncomeAndPositiveExpense() {
+        // Create transactions with exactly zero income and a positive expense
+        TransactionModel zeroIncome = new TransactionModel();
+        zeroIncome.setType(TransactionModel.TransactionType.INCOME);
+        zeroIncome.setAmount(0.0F);
+
+        TransactionModel positiveExpense = new TransactionModel();
+        positiveExpense.setType(TransactionModel.TransactionType.EXPENSE);
+        positiveExpense.setAmount(100.0F);
+
+        when(transactionRepository.findByUserLoginAndDateBetween(
+                eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Arrays.asList(zeroIncome, positiveExpense));
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        inboxMessageService.checkForOverallOverspending(testUser);
+
+        // Verify both messages are created
+        verify(inboxMessageRepository, times(2)).save(messageCaptor.capture());
+        List<InboxMessageModel> messages = messageCaptor.getAllValues();
+
+        // Verify we get both the "no income" and "large expense" messages
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("no income recorded this month")));
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("large individual expense")));
+    }
+
+    @Test
+    void checkForOverallOverspending_ShouldHandleMultipleExpensesWithZeroIncome() {
+        // Create multiple expenses with zero income
+        TransactionModel zeroIncome = new TransactionModel();
+        zeroIncome.setType(TransactionModel.TransactionType.INCOME);
+        zeroIncome.setAmount(0.0F);
+
+        TransactionModel expense1 = new TransactionModel();
+        expense1.setType(TransactionModel.TransactionType.EXPENSE);
+        expense1.setAmount(50.0F);
+
+        TransactionModel expense2 = new TransactionModel();
+        expense2.setType(TransactionModel.TransactionType.EXPENSE);
+        expense2.setAmount(75.0F);
+
+        when(transactionRepository.findByUserLoginAndDateBetween(
+                eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Arrays.asList(zeroIncome, expense1, expense2));
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        inboxMessageService.checkForOverallOverspending(testUser);
+
+        verify(inboxMessageRepository, times(2)).save(messageCaptor.capture());
+        List<InboxMessageModel> messages = messageCaptor.getAllValues();
+
+        // Verify both types of messages
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("no income recorded this month")));
+        assertTrue(messages.stream()
+                .anyMatch(msg -> msg.getMessage().contains("large individual expense")));
     }
 }
