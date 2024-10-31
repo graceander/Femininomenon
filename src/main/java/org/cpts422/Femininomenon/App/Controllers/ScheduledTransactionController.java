@@ -42,7 +42,6 @@ public class ScheduledTransactionController {
         } else {
             model.addAttribute("scheduledTransactions", scheduledTransactions);
         }
-        model.addAttribute("user", user);
         return "viewScheduledTransactions";
     }
 
@@ -126,7 +125,7 @@ public class ScheduledTransactionController {
         // get the transaction ID
         ScheduledTransactionModel scheduledTransaction = scheduledTransactionService.getTransactionById(id);
         if (scheduledTransaction == null || !scheduledTransaction.getUser().getLogin().equals(login)) {
-            model.addAttribute("error", "Transaction noes not belong to the user");
+            model.addAttribute("error", "Transaction does not belong to the user");
             return "error";
         }
 
