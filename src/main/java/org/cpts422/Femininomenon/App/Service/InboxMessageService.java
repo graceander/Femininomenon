@@ -122,7 +122,11 @@ public class InboxMessageService {
         }
     }
 
+
     private LocalDateTime getStartDate(LocalDateTime now, UserRuleModel.Frequency frequency) {
+        if (frequency == null) {
+            throw new IllegalArgumentException("Frequency cannot be null");
+        }
         switch (frequency) {
             case DAILY:
                 return now.truncatedTo(ChronoUnit.DAYS);
@@ -130,8 +134,8 @@ public class InboxMessageService {
                 return now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
             case MONTHLY:
                 return now.with(TemporalAdjusters.firstDayOfMonth());
-            default:
-                throw new IllegalArgumentException("Unsupported frequency type");
+                default:
+                    throw new IllegalArgumentException("Unsupported frequency type: " + frequency);
         }
     }
 

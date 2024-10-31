@@ -101,14 +101,16 @@ public class TransactionService {
     }
 
     public Map<String, Float> getSpendingByCategory(String login, int year, int month) {
-        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusSeconds(1);
+        // Create start of month (inclusive)
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+        // Create start of next month (exclusive)
+        LocalDateTime startOfNextMonth = startOfMonth.plusMonths(1);
 
         return getTransactionsByUser(login).stream()
-                .filter(t -> t.getDate().isAfter(startOfMonth) && t.getDate().isBefore(endOfMonth))
+                .filter(t -> !t.getDate().isBefore(startOfMonth) && t.getDate().isBefore(startOfNextMonth))
                 .filter(t -> t.getType() == TransactionModel.TransactionType.EXPENSE)
                 .collect(Collectors.groupingBy(
-                        t -> t.getCategory().name(), // Convert enum to String
+                        t -> t.getCategory().name(),
                         Collectors.summingDouble(TransactionModel::getAmount)
                 ))
                 .entrySet().stream()

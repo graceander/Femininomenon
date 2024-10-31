@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BankHolidays</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.cpts422.Femininomenon.App.Utils</a>
+</div>
+
+<h1>Coverage Summary for Class: BankHolidays (org.cpts422.Femininomenon.App.Utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BankHolidays</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Utils;
+&nbsp;
+&nbsp;import java.time.DayOfWeek;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.time.Month;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class BankHolidays {</b>
+&nbsp;
+&nbsp;    // Method to generate the list of bank holidays for a given year
+&nbsp;    public static List&lt;LocalDateTime&gt; getListOfBankHolidays(int year) {
+<b class="nc">&nbsp;        List&lt;LocalDateTime&gt; bankHolidays = new ArrayList&lt;&gt;();</b>
+&nbsp;        // add dates that are always the same number
+<b class="nc">&nbsp;        bankHolidays.add(LocalDateTime.of(year, Month.JANUARY, 1, 0, 0)); // New Year 1/1</b>
+<b class="nc">&nbsp;        bankHolidays.add(LocalDateTime.of(year, Month.JUNE, 19, 0, 0)); // Juneteenth 6/19</b>
+<b class="nc">&nbsp;        bankHolidays.add(LocalDateTime.of(year, Month.JULY, 4, 0, 0)); // 4th of July 7/6</b>
+<b class="nc">&nbsp;        bankHolidays.add(LocalDateTime.of(year, Month.NOVEMBER, 11, 0, 0)); // Veterans Day 11/11</b>
+<b class="nc">&nbsp;        bankHolidays.add(LocalDateTime.of(year, Month.DECEMBER, 25, 0, 0)); // Christmas 12/25</b>
+&nbsp;
+&nbsp;        // Civil Rights Day - the third Monday of January
+<b class="nc">&nbsp;        LocalDateTime civilRightsDay = findSpecificHoliday(LocalDateTime.of(year, Month.JANUARY, 1, 0, 0), DayOfWeek.MONDAY,2);</b>
+<b class="nc">&nbsp;        bankHolidays.add(civilRightsDay);</b>
+&nbsp;
+&nbsp;        // President&#39;s Day - the third Monday of February
+<b class="nc">&nbsp;        LocalDateTime presidentsDay = findSpecificHoliday(LocalDateTime.of(year, Month.FEBRUARY, 1, 0, 0), DayOfWeek.MONDAY,2);</b>
+<b class="nc">&nbsp;        bankHolidays.add(presidentsDay);</b>
+&nbsp;
+&nbsp;        // Memorial Day - the last Monday of May
+<b class="nc">&nbsp;        LocalDateTime memorialDay = findSpecificHoliday(LocalDateTime.of(year, Month.MAY, 31, 0, 0), DayOfWeek.MONDAY,0);</b>
+<b class="nc">&nbsp;        bankHolidays.add(memorialDay);</b>
+&nbsp;
+&nbsp;        // Labor Day - the first Monday of September
+<b class="nc">&nbsp;        LocalDateTime laborDay = findSpecificHoliday(LocalDateTime.of(year, Month.SEPTEMBER, 1, 0, 0), DayOfWeek.MONDAY,0);</b>
+<b class="nc">&nbsp;        bankHolidays.add(laborDay);</b>
+&nbsp;
+&nbsp;        // Indigenous People&#39;s Day - the second Monday of October
+<b class="nc">&nbsp;        LocalDateTime indigenousPeoplesDay = findSpecificHoliday(LocalDateTime.of(year, Month.OCTOBER, 1, 0, 0), DayOfWeek.MONDAY,1);</b>
+<b class="nc">&nbsp;        bankHolidays.add(indigenousPeoplesDay);</b>
+&nbsp;
+&nbsp;        // Thanksgiving - the fourth Thursday of November
+<b class="nc">&nbsp;        LocalDateTime thanksgiving = findSpecificHoliday(LocalDateTime.of(year, Month.NOVEMBER, 1, 0, 0), DayOfWeek.THURSDAY,3);</b>
+<b class="nc">&nbsp;        bankHolidays.add(thanksgiving);</b>
+&nbsp;
+<b class="nc">&nbsp;        return bankHolidays;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Method to find a holiday where the date is determined by the day of the week and the week number of the month rather than being a regularly set date
+&nbsp;    public static LocalDateTime findSpecificHoliday(LocalDateTime startingDay, DayOfWeek holidayDayOfWeek, int weekNumOffset) {
+<b class="nc">&nbsp;        int weekdayOffset = (startingDay.getDayOfWeek().getValue() - holidayDayOfWeek.getValue() + 7) % 7; // weekday offset calculation</b>
+<b class="nc">&nbsp;        if (startingDay.getDayOfMonth() == 1) { // if you are given the first of the month</b>
+<b class="nc">&nbsp;            return startingDay.plusDays(weekdayOffset).plusWeeks(weekNumOffset);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (startingDay.getDayOfMonth() == startingDay.toLocalDate().lengthOfMonth()) { // if you are given the end of the month</b>
+<b class="nc">&nbsp;            return startingDay.minusDays(weekdayOffset).minusWeeks(weekNumOffset);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Illegal Argument: starting date to use for calculation must be the first or the last day of the month&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Method to identify the next business day after a bank closure day
+&nbsp;    public static LocalDateTime adjustForBankClosures(LocalDateTime scheduledDate) {
+<b class="nc">&nbsp;        LocalDateTime adjustedDate = scheduledDate; // initialize to given date</b>
+<b class="nc">&nbsp;        int paymentYear = scheduledDate.getYear();</b>
+<b class="nc">&nbsp;        List&lt;LocalDateTime&gt; bankHolidays = getListOfBankHolidays(paymentYear);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (adjustedDate.getDayOfWeek() == DayOfWeek.SUNDAY) { // if the date is a Sunday</b>
+<b class="nc">&nbsp;            adjustedDate = adjustedDate.plusDays(1); // increment one day to Monday</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (adjustedDate.getDayOfWeek() == DayOfWeek.SATURDAY) { // if the date is a Saturday</b>
+<b class="nc">&nbsp;            adjustedDate = adjustedDate.plusDays(2); // increment two days to Monday</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (LocalDateTime bankHoliday : bankHolidays) {</b>
+<b class="nc">&nbsp;            if (adjustedDate.getMonth() == bankHoliday.getMonth() &amp;&amp; adjustedDate.getDayOfMonth() == bankHoliday.getDayOfMonth()) {</b>
+<b class="nc">&nbsp;                return adjustedDate.plusDays(1);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return adjustedDate;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-29 21:53</div>
+</div>
+</body>
+</html>
