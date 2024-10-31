@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > UserRuleService</title>
+  <title>Coverage Report > UserRuleModel</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,21 +19,22 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.cpts422.Femininomenon.App.Service</a>
+    <a href="../index.html">org.cpts422.Femininomenon.App.Models</a>
 </div>
 
-<h1>Coverage Summary for Class: UserRuleService (org.cpts422.Femininomenon.App.Service)</h1>
+<h1>Coverage Summary for Class: UserRuleModel (org.cpts422.Femininomenon.App.Models)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 <th class="coverageStat 
 ">
-  Class, %
+  Method, %
 </th>
 <th class="coverageStat 
 ">
-  Method, %
+  Branch, %
 </th>
 <th class="coverageStat 
 ">
@@ -41,33 +42,97 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">UserRuleService</td>
+  <td class="name">UserRuleModel</td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (1/1)
+    (0/19)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (3/3)
+    (0/18)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    0%
   </span>
   <span class="absValue">
-    (4/4)
+    (0/31)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">UserRuleModel$Frequency</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">UserRuleModel$RuleType</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/23)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -75,30 +140,148 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Service;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Models;
 &nbsp;
-&nbsp;import org.cpts422.Femininomenon.App.Models.UserRuleModel;
-&nbsp;import org.cpts422.Femininomenon.App.Repository.UserRuleRepository;
-&nbsp;import org.springframework.beans.factory.annotation.Autowired;
-&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import org.apache.catalina.User;
 &nbsp;
-&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
 &nbsp;
-&nbsp;@Service
-&nbsp;public class UserRuleService {
-&nbsp;    private final UserRuleRepository userRuleRepository;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;rules_table&quot;)
+&nbsp;public class UserRuleModel {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    Long id;
 &nbsp;
-&nbsp;    @Autowired
-<b class="fc">&nbsp;    public UserRuleService(UserRuleRepository userRuleRepository) {</b>
-<b class="fc">&nbsp;        this.userRuleRepository = userRuleRepository;</b>
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+&nbsp;    UserModel user;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    @Column(name = &quot;category&quot;)
+&nbsp;    TransactionModel.CategoryType category;
+&nbsp;
+&nbsp;    @Column(name = &quot;limit_amount&quot;, nullable = false)
+&nbsp;    float limitAmount;
+&nbsp;
+&nbsp;    @Column(name = &quot;frequency&quot;, nullable = false)
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    Frequency frequency;
+&nbsp;
+&nbsp;    @Column(name = &quot;rule_type&quot;, nullable = false)
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    RuleType ruleType;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    @Column(name = &quot;additional_category&quot;)
+&nbsp;    TransactionModel.CategoryType additionalCategory;
+&nbsp;
+<b class="nc">&nbsp;    public enum Frequency {</b>
+<b class="nc">&nbsp;        DAILY, WEEKLY, MONTHLY, YEARLY</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public List&lt;UserRuleModel&gt; getRulesByUserLogin(String userLogin) {
-<b class="fc">&nbsp;        return userRuleRepository.findByUserLogin(userLogin);</b>
+<b class="nc">&nbsp;    public enum RuleType {</b>
+<b class="nc">&nbsp;        MAXIMUM_SPENDING, MINIMUM_SAVINGS, NOT_EXCEED_CATEGORY</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public void saveRule(UserRuleModel rule) {
-<b class="fc">&nbsp;        userRuleRepository.save(rule);</b>
+<b class="nc">&nbsp;    public UserRuleModel() {}</b>
+&nbsp;
+<b class="nc">&nbsp;    public UserRuleModel(UserModel user, TransactionModel.CategoryType category, float limitAmount, Frequency frequency, RuleType ruleType, TransactionModel.CategoryType additionalCategory) {</b>
+<b class="nc">&nbsp;        this.user = user;</b>
+<b class="nc">&nbsp;        this.category = category;</b>
+<b class="nc">&nbsp;        this.limitAmount = limitAmount;</b>
+<b class="nc">&nbsp;        this.frequency = frequency;</b>
+<b class="nc">&nbsp;        this.ruleType = ruleType;</b>
+<b class="nc">&nbsp;        this.additionalCategory = additionalCategory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public TransactionModel.CategoryType getAdditionalCategory() {
+<b class="nc">&nbsp;        return additionalCategory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAdditionalCategory(TransactionModel.CategoryType additionalCategory) {
+<b class="nc">&nbsp;        this.additionalCategory = additionalCategory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UserModel getUser() {
+<b class="nc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser(UserModel user) {
+<b class="nc">&nbsp;        this.user = user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public TransactionModel.CategoryType getCategory() {
+<b class="nc">&nbsp;        return category;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCategory(TransactionModel.CategoryType category) {
+<b class="nc">&nbsp;        this.category = category;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public float getLimitAmount() {
+<b class="nc">&nbsp;        return limitAmount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLimitAmount(float limitAmount) {
+<b class="nc">&nbsp;        this.limitAmount = limitAmount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Frequency getFrequency() {
+<b class="nc">&nbsp;        return frequency;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFrequency(Frequency frequency) {
+<b class="nc">&nbsp;        this.frequency = frequency;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public RuleType getRuleType() {
+<b class="nc">&nbsp;        return ruleType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRuleType(RuleType ruleType) {
+<b class="nc">&nbsp;        this.ruleType = ruleType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object o) {
+<b class="nc">&nbsp;        if (this == o) return true;</b>
+<b class="nc">&nbsp;        if (o == null || getClass() != o.getClass()) return false;</b>
+<b class="nc">&nbsp;        UserRuleModel ruleModel = (UserRuleModel) o;</b>
+<b class="nc">&nbsp;        return Float.compare(ruleModel.limitAmount, limitAmount) == 0 &amp;&amp;</b>
+<b class="nc">&nbsp;                Objects.equals(id, ruleModel.id) &amp;&amp;</b>
+<b class="nc">&nbsp;                Objects.equals(user, ruleModel.user) &amp;&amp;</b>
+<b class="nc">&nbsp;                Objects.equals(category, ruleModel.category) &amp;&amp;</b>
+&nbsp;                frequency == ruleModel.frequency &amp;&amp;
+&nbsp;                ruleType == ruleModel.ruleType;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        return Objects.hash(id, user, category, limitAmount, frequency, ruleType);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;RuleModel{&quot; +</b>
+&nbsp;                &quot;id=&quot; + id +
+&nbsp;                &quot;, user=&quot; + user +
+&nbsp;                &quot;, category=&#39;&quot; + category + &#39;\&#39;&#39; +
+&nbsp;                &quot;, limitAmount=&quot; + limitAmount +
+&nbsp;                &quot;, frequency=&quot; + frequency +
+&nbsp;                &quot;, ruleType=&quot; + ruleType +
+&nbsp;                &quot;, additionalCategory=&quot; + additionalCategory +
+&nbsp;                &#39;}&#39;;
 &nbsp;    }
 &nbsp;}
 </code>
@@ -124,11 +307,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-<<<<<<< HEAD
-    <div style="float:right;">generated on 2024-10-29 21:56</div>
-=======
-    <div style="float:right;">generated on 2024-10-30 17:10</div>
->>>>>>> origin/main
+    <div style="float:right;">generated on 2024-10-30 20:11</div>
 </div>
 </body>
 </html>
