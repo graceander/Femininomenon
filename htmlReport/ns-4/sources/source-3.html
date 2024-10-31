@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > UserRuleRepository</title>
+  <title>Coverage Report > InboxMessageRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,16 +22,25 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.cpts422.Femininomenon.App.Repository</a>
 </div>
 
-<h1>Coverage Summary for Class: UserRuleRepository (org.cpts422.Femininomenon.App.Repository)</h1>
+<h1>Coverage Summary for Class: InboxMessageRepository (org.cpts422.Femininomenon.App.Repository)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 </tr>
+  <tr>
+    <td class="name">InboxMessageRepository$MockitoMock$049aOifQ</td>
+  </tr>
+  <tr>
+    <td class="name">InboxMessageRepository$MockitoMock$049aOifQ$auxiliary$TLGlx1zj</td>
+  </tr>
+  <tr>
+    <td class="name">InboxMessageRepository$MockitoMock$049aOifQ$auxiliary$XiClIV5X</td>
+  </tr>
 <tr>
-  <td class="name">UserRuleRepository</td>
+  <td class="name"><strong>Total</strong></td>
 </tr>
-
 </table>
 
 <br/>
@@ -41,15 +50,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Repository;
 &nbsp;
-&nbsp;import org.cpts422.Femininomenon.App.Models.UserRuleModel;
+&nbsp;import org.cpts422.Femininomenon.App.Models.InboxMessageModel;
+&nbsp;import org.cpts422.Femininomenon.App.Models.UserModel;
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.stereotype.Repository;
 &nbsp;
+&nbsp;import java.time.LocalDateTime;
 &nbsp;import java.util.List;
 &nbsp;
-&nbsp;public interface UserRuleRepository extends JpaRepository&lt;UserRuleModel, Long&gt; {
-&nbsp;    List&lt;UserRuleModel&gt; findByUserLogin(String userLogin);
-&nbsp;
-&nbsp;
+&nbsp;@Repository
+&nbsp;public interface InboxMessageRepository extends JpaRepository&lt;InboxMessageModel, Long&gt; {
+&nbsp;    List&lt;InboxMessageModel&gt; findByUser(UserModel user);
+&nbsp;    List&lt;InboxMessageModel&gt; findByUserAndIsReadFalse(UserModel user);
+&nbsp;    boolean existsByUserAndMessageContainingAndTimestampAfter(UserModel user, String messageContent, LocalDateTime timestamp);
 &nbsp;}
 </code>
 </pre>
@@ -74,7 +87,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 21:58</div>
+    <div style="float:right;">generated on 2024-10-30 18:23</div>
 </div>
 </body>
 </html>

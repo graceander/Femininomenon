@@ -45,26 +45,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">TransactionModel</td>
 <td class="coverageStat">
   <span class="percent">
-    66.7%
+    100%
   </span>
   <span class="absValue">
-    (14/21)
+    (21/21)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/20)
+    (20/20)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    58.3%
+    100%
   </span>
   <span class="absValue">
-    (21/36)
+    (36/36)
   </span>
 </td>
 </tr>
@@ -110,26 +110,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name"><strong>Total</strong></td>
 <td class="coverageStat">
   <span class="percent">
-    72%
+    100%
   </span>
   <span class="absValue">
-    (18/25)
+    (25/25)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/20)
+    (20/20)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    68.1%
+    100%
   </span>
   <span class="absValue">
-    (32/47)
+    (47/47)
   </span>
 </td>
 </tr>
@@ -208,7 +208,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;
 &nbsp;    public Long getId() {
-<b class="nc">&nbsp;        return id;</b>
+<b class="fc">&nbsp;        return id;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setId(Long id) {
@@ -224,7 +224,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public LocalDateTime getDate() {
-<b class="nc">&nbsp;        return date;</b>
+<b class="fc">&nbsp;        return date;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setDate(LocalDateTime date) {
@@ -256,7 +256,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public TransactionType getType() {
-<b class="nc">&nbsp;        return type;</b>
+<b class="fc">&nbsp;        return type;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setType(TransactionType type) {
@@ -264,7 +264,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public String getAccount() {
-<b class="nc">&nbsp;        return account;</b>
+<b class="fc">&nbsp;        return account;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setAccount(String account) {
@@ -273,27 +273,27 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public boolean equals(Object o) {
-<b class="nc">&nbsp;        if (this == o) return true;</b>
-<b class="nc">&nbsp;        if (o == null || getClass() != o.getClass()) return false;</b>
-<b class="nc">&nbsp;        TransactionModel that = (TransactionModel) o;</b>
-<b class="nc">&nbsp;        return Float.compare(that.amount, amount) == 0 &amp;&amp;</b>
-<b class="nc">&nbsp;                Objects.equals(id, that.id) &amp;&amp;</b>
-<b class="nc">&nbsp;                Objects.equals(user, that.user) &amp;&amp;</b>
-<b class="nc">&nbsp;                Objects.equals(date, that.date) &amp;&amp;</b>
+<b class="fc">&nbsp;        if (this == o) return true;</b>
+<b class="fc">&nbsp;        if (o == null || getClass() != o.getClass()) return false;</b>
+<b class="fc">&nbsp;        TransactionModel that = (TransactionModel) o;</b>
+<b class="fc">&nbsp;        return Float.compare(that.amount, amount) == 0 &amp;&amp;</b>
+<b class="fc">&nbsp;                Objects.equals(id, that.id) &amp;&amp;</b>
+<b class="fc">&nbsp;                Objects.equals(user, that.user) &amp;&amp;</b>
+<b class="fc">&nbsp;                Objects.equals(date, that.date) &amp;&amp;</b>
 &nbsp;                category == that.category &amp;&amp; // Check equality with enum
-<b class="nc">&nbsp;                Objects.equals(description, that.description) &amp;&amp;</b>
+<b class="fc">&nbsp;                Objects.equals(description, that.description) &amp;&amp;</b>
 &nbsp;                type == that.type &amp;&amp;
-<b class="nc">&nbsp;                Objects.equals(account, that.account);</b>
+<b class="fc">&nbsp;                Objects.equals(account, that.account);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public int hashCode() {
-<b class="nc">&nbsp;        return Objects.hash(id, user, date, amount, category, description, type, account);</b>
+<b class="fc">&nbsp;        return Objects.hash(id, user, date, amount, category, description, type, account);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public String toString() {
-<b class="nc">&nbsp;        return &quot;Transaction{&quot; +</b>
+<b class="fc">&nbsp;        return &quot;Transaction{&quot; +</b>
 &nbsp;                &quot;id=&quot; + id +
 &nbsp;                &quot;, user=&quot; + user +
 &nbsp;                &quot;, date=&quot; + date +
@@ -328,7 +328,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 21:58</div>
+    <div style="float:right;">generated on 2024-10-30 18:23</div>
 </div>
 </body>
 </html>

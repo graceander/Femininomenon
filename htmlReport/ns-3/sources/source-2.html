@@ -45,26 +45,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">InboxMessageService</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/8)
+    (8/8)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    97.8%
   </span>
   <span class="absValue">
-    (0/44)
+    (45/46)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/98)
+    (100/100)
   </span>
 </td>
 </tr>
@@ -72,18 +72,18 @@ Current scope:     <a href="../../index.html">all classes</a>
     <td class="name">InboxMessageService$1</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/2)
+    (2/2)
   </span>
 </td>
   </tr>
@@ -91,26 +91,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name"><strong>Total</strong></td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/9)
+    (9/9)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    97.8%
   </span>
   <span class="absValue">
-    (0/44)
+    (45/46)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/100)
+    (102/102)
   </span>
 </td>
 </tr>
@@ -149,95 +149,95 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @Autowired
 &nbsp;    public InboxMessageService(InboxMessageRepository inboxMessageRepository,
 &nbsp;                               TransactionRepository transactionRepository,
-<b class="nc">&nbsp;                               UserRuleService userRuleService) {</b>
-<b class="nc">&nbsp;        this.inboxMessageRepository = inboxMessageRepository;</b>
-<b class="nc">&nbsp;        this.transactionRepository = transactionRepository;</b>
-<b class="nc">&nbsp;        this.userRuleService = userRuleService;</b>
+<b class="fc">&nbsp;                               UserRuleService userRuleService) {</b>
+<b class="fc">&nbsp;        this.inboxMessageRepository = inboxMessageRepository;</b>
+<b class="fc">&nbsp;        this.transactionRepository = transactionRepository;</b>
+<b class="fc">&nbsp;        this.userRuleService = userRuleService;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;InboxMessageModel&gt; getInboxMessages(UserModel user) {
-<b class="nc">&nbsp;        return inboxMessageRepository.findByUser(user);</b>
+<b class="fc">&nbsp;        return inboxMessageRepository.findByUser(user);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    private void addMessage(UserModel user, String messageContent) {
-<b class="nc">&nbsp;        System.out.println(&quot;Adding message for user &quot; + user.getLogin() + &quot;: &quot; + messageContent);</b>
-<b class="nc">&nbsp;        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);</b>
-<b class="nc">&nbsp;        boolean messageExists = inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(user, messageContent, oneDayAgo);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Adding message for user &quot; + user.getLogin() + &quot;: &quot; + messageContent);</b>
+<b class="fc">&nbsp;        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);</b>
+<b class="fc">&nbsp;        boolean messageExists = inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(user, messageContent, oneDayAgo);</b>
 &nbsp;
-<b class="nc">&nbsp;        if (!messageExists) {</b>
-<b class="nc">&nbsp;            InboxMessageModel newMessage = new InboxMessageModel(user, messageContent);</b>
-<b class="nc">&nbsp;            inboxMessageRepository.save(newMessage);</b>
-<b class="nc">&nbsp;            System.out.println(&quot;New message added to inbox for user: &quot; + user.getLogin());</b>
+<b class="fc">&nbsp;        if (!messageExists) {</b>
+<b class="fc">&nbsp;            InboxMessageModel newMessage = new InboxMessageModel(user, messageContent);</b>
+<b class="fc">&nbsp;            inboxMessageRepository.save(newMessage);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;New message added to inbox for user: &quot; + user.getLogin());</b>
 &nbsp;        } else {
-<b class="nc">&nbsp;            System.out.println(&quot;Similar message already exists for user: &quot; + user.getLogin() + &quot;. Skipping.&quot;);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Similar message already exists for user: &quot; + user.getLogin() + &quot;. Skipping.&quot;);</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    public void markMessageAsRead(Long messageId) {
-<b class="nc">&nbsp;        InboxMessageModel message = inboxMessageRepository.findById(messageId)</b>
-<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Message not found&quot;));</b>
-<b class="nc">&nbsp;        message.setRead(true);</b>
-<b class="nc">&nbsp;        inboxMessageRepository.save(message);</b>
+<b class="fc">&nbsp;        InboxMessageModel message = inboxMessageRepository.findById(messageId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Message not found&quot;));</b>
+<b class="fc">&nbsp;        message.setRead(true);</b>
+<b class="fc">&nbsp;        inboxMessageRepository.save(message);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void markAllMessagesAsRead(UserModel user) {
-<b class="nc">&nbsp;        List&lt;InboxMessageModel&gt; unreadMessages = inboxMessageRepository.findByUserAndIsReadFalse(user);</b>
-<b class="nc">&nbsp;        unreadMessages.forEach(message -&gt; message.setRead(true));</b>
-<b class="nc">&nbsp;        inboxMessageRepository.saveAll(unreadMessages);</b>
+<b class="fc">&nbsp;        List&lt;InboxMessageModel&gt; unreadMessages = inboxMessageRepository.findByUserAndIsReadFalse(user);</b>
+<b class="fc">&nbsp;        unreadMessages.forEach(message -&gt; message.setRead(true));</b>
+<b class="fc">&nbsp;        inboxMessageRepository.saveAll(unreadMessages);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    // check for overspending
 &nbsp;    public void checkSpendingRules(UserModel user) {
-<b class="nc">&nbsp;        List&lt;UserRuleModel&gt; rules = userRuleService.getRulesByUserLogin(user.getLogin());</b>
-<b class="nc">&nbsp;        LocalDateTime now = LocalDateTime.now();</b>
+<b class="fc">&nbsp;        List&lt;UserRuleModel&gt; rules = userRuleService.getRulesByUserLogin(user.getLogin());</b>
+<b class="fc">&nbsp;        LocalDateTime now = LocalDateTime.now();</b>
 &nbsp;
-<b class="nc">&nbsp;        for (UserRuleModel rule : rules) {</b>
-<b class="nc">&nbsp;            if (rule.getCategory() == null) {</b>
+<b class="fc">&nbsp;        for (UserRuleModel rule : rules) {</b>
+<b class="fc">&nbsp;            if (rule.getCategory() == null) {</b>
 &nbsp;                continue; // Skip rules with null category
 &nbsp;            }
 &nbsp;
-<b class="nc">&nbsp;            LocalDateTime startDate = getStartDate(now, rule.getFrequency());</b>
-<b class="nc">&nbsp;            LocalDateTime endDate = now;</b>
+<b class="fc">&nbsp;            LocalDateTime startDate = getStartDate(now, rule.getFrequency());</b>
+<b class="fc">&nbsp;            LocalDateTime endDate = now;</b>
 &nbsp;
-<b class="nc">&nbsp;            List&lt;TransactionModel&gt; transactions = transactionRepository.findByUserLoginAndDateBetween(</b>
-<b class="nc">&nbsp;                    user.getLogin(), startDate, endDate);</b>
+<b class="fc">&nbsp;            List&lt;TransactionModel&gt; transactions = transactionRepository.findByUserLoginAndDateBetween(</b>
+<b class="fc">&nbsp;                    user.getLogin(), startDate, endDate);</b>
 &nbsp;
-<b class="nc">&nbsp;            Map&lt;TransactionModel.CategoryType, Double&gt; categorySpending = transactions.stream()</b>
-<b class="nc">&nbsp;                    .filter(t -&gt; t.getType() == TransactionModel.TransactionType.EXPENSE)</b>
-<b class="nc">&nbsp;                    .collect(Collectors.groupingBy(</b>
+<b class="fc">&nbsp;            Map&lt;TransactionModel.CategoryType, Double&gt; categorySpending = transactions.stream()</b>
+<b class="fc">&nbsp;                    .filter(t -&gt; t.getType() == TransactionModel.TransactionType.EXPENSE)</b>
+<b class="fc">&nbsp;                    .collect(Collectors.groupingBy(</b>
 &nbsp;                            TransactionModel::getCategory,
-<b class="nc">&nbsp;                            Collectors.summingDouble(TransactionModel::getAmount)</b>
+<b class="fc">&nbsp;                            Collectors.summingDouble(TransactionModel::getAmount)</b>
 &nbsp;                    ));
 &nbsp;
-<b class="nc">&nbsp;            double ruleAmount = categorySpending.getOrDefault(rule.getCategory(), 0.0);</b>
+<b class="fc">&nbsp;            double ruleAmount = categorySpending.getOrDefault(rule.getCategory(), 0.0);</b>
 &nbsp;
-<b class="nc">&nbsp;            switch (rule.getRuleType()) {</b>
+<b class="pc">&nbsp;            switch (rule.getRuleType()) {</b>
 &nbsp;                case MAXIMUM_SPENDING:
-<b class="nc">&nbsp;                    if (ruleAmount &gt; rule.getLimitAmount()) {</b>
-<b class="nc">&nbsp;                        String message = String.format(&quot;Alert: You&#39;ve exceeded your %s spending limit for %s. Spent: $%.2f, Limit: $%.2f&quot;,</b>
-<b class="nc">&nbsp;                                rule.getFrequency().toString().toLowerCase(), rule.getCategory(), ruleAmount, rule.getLimitAmount());</b>
-<b class="nc">&nbsp;                        addMessage(user, message);</b>
+<b class="fc">&nbsp;                    if (ruleAmount &gt; rule.getLimitAmount()) {</b>
+<b class="fc">&nbsp;                        String message = String.format(&quot;Alert: You&#39;ve exceeded your %s spending limit for %s. Spent: $%.2f, Limit: $%.2f&quot;,</b>
+<b class="fc">&nbsp;                                rule.getFrequency().toString().toLowerCase(), rule.getCategory(), ruleAmount, rule.getLimitAmount());</b>
+<b class="fc">&nbsp;                        addMessage(user, message);</b>
 &nbsp;                    }
 &nbsp;                    break;
 &nbsp;                case MINIMUM_SAVINGS:
-<b class="nc">&nbsp;                    double totalIncome = transactions.stream()</b>
-<b class="nc">&nbsp;                            .filter(t -&gt; t.getType() == TransactionModel.TransactionType.INCOME)</b>
-<b class="nc">&nbsp;                            .mapToDouble(TransactionModel::getAmount)</b>
-<b class="nc">&nbsp;                            .sum();</b>
-<b class="nc">&nbsp;                    double savings = totalIncome - ruleAmount;</b>
-<b class="nc">&nbsp;                    if (savings &lt; rule.getLimitAmount()) {</b>
-<b class="nc">&nbsp;                        String message = String.format(&quot;Alert: Your %s savings for %s are below the target. Saved: $%.2f, Target: $%.2f&quot;,</b>
-<b class="nc">&nbsp;                                rule.getFrequency().toString().toLowerCase(), rule.getCategory(), savings, rule.getLimitAmount());</b>
-<b class="nc">&nbsp;                        addMessage(user, message);</b>
+<b class="fc">&nbsp;                    double totalIncome = transactions.stream()</b>
+<b class="fc">&nbsp;                            .filter(t -&gt; t.getType() == TransactionModel.TransactionType.INCOME)</b>
+<b class="fc">&nbsp;                            .mapToDouble(TransactionModel::getAmount)</b>
+<b class="fc">&nbsp;                            .sum();</b>
+<b class="fc">&nbsp;                    double savings = totalIncome - ruleAmount;</b>
+<b class="fc">&nbsp;                    if (savings &lt; rule.getLimitAmount()) {</b>
+<b class="fc">&nbsp;                        String message = String.format(&quot;Alert: Your %s savings for %s are below the target. Saved: $%.2f, Target: $%.2f&quot;,</b>
+<b class="fc">&nbsp;                                rule.getFrequency().toString().toLowerCase(), rule.getCategory(), savings, rule.getLimitAmount());</b>
+<b class="fc">&nbsp;                        addMessage(user, message);</b>
 &nbsp;                    }
 &nbsp;                    break;
 &nbsp;                case NOT_EXCEED_CATEGORY:
-<b class="nc">&nbsp;                    if (rule.getAdditionalCategory() != null) {</b>
-<b class="nc">&nbsp;                        double comparisonAmount = categorySpending.getOrDefault(rule.getAdditionalCategory(), 0.0);</b>
-<b class="nc">&nbsp;                        if (ruleAmount &gt; comparisonAmount) {</b>
-<b class="nc">&nbsp;                            String message = String.format(&quot;Alert: Your spending in %s ($%.2f) has exceeded your spending in the prioritized category %s ($%.2f).&quot;,</b>
-<b class="nc">&nbsp;                                    rule.getCategory(), ruleAmount, rule.getAdditionalCategory(), comparisonAmount);</b>
-<b class="nc">&nbsp;                            addMessage(user, message);</b>
+<b class="fc">&nbsp;                    if (rule.getAdditionalCategory() != null) {</b>
+<b class="fc">&nbsp;                        double comparisonAmount = categorySpending.getOrDefault(rule.getAdditionalCategory(), 0.0);</b>
+<b class="fc">&nbsp;                        if (ruleAmount &gt; comparisonAmount) {</b>
+<b class="fc">&nbsp;                            String message = String.format(&quot;Alert: Your spending in %s ($%.2f) has exceeded your spending in the prioritized category %s ($%.2f).&quot;,</b>
+<b class="fc">&nbsp;                                    rule.getCategory(), ruleAmount, rule.getAdditionalCategory(), comparisonAmount);</b>
+<b class="fc">&nbsp;                            addMessage(user, message);</b>
 &nbsp;                        }
 &nbsp;                    }
 &nbsp;                    break;
@@ -245,77 +245,81 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
+&nbsp;
 &nbsp;    private LocalDateTime getStartDate(LocalDateTime now, UserRuleModel.Frequency frequency) {
-<b class="nc">&nbsp;        switch (frequency) {</b>
+<b class="fc">&nbsp;        if (frequency == null) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Frequency cannot be null&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        switch (frequency) {</b>
 &nbsp;            case DAILY:
-<b class="nc">&nbsp;                return now.truncatedTo(ChronoUnit.DAYS);</b>
+<b class="fc">&nbsp;                return now.truncatedTo(ChronoUnit.DAYS);</b>
 &nbsp;            case WEEKLY:
-<b class="nc">&nbsp;                return now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));</b>
+<b class="fc">&nbsp;                return now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));</b>
 &nbsp;            case MONTHLY:
-<b class="nc">&nbsp;                return now.with(TemporalAdjusters.firstDayOfMonth());</b>
-&nbsp;            default:
-<b class="nc">&nbsp;                throw new IllegalArgumentException(&quot;Unsupported frequency type&quot;);</b>
+<b class="fc">&nbsp;                return now.with(TemporalAdjusters.firstDayOfMonth());</b>
+&nbsp;                default:
+<b class="fc">&nbsp;                    throw new IllegalArgumentException(&quot;Unsupported frequency type: &quot; + frequency);</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    public void checkForOverallOverspending(UserModel user) {
-<b class="nc">&nbsp;        System.out.println(&quot;Starting overspending check for user: &quot; + user.getLogin());</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Starting overspending check for user: &quot; + user.getLogin());</b>
 &nbsp;
-<b class="nc">&nbsp;        LocalDateTime now = LocalDateTime.now();</b>
-<b class="nc">&nbsp;        LocalDateTime startOfMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);</b>
-<b class="nc">&nbsp;        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);</b>
+<b class="fc">&nbsp;        LocalDateTime now = LocalDateTime.now();</b>
+<b class="fc">&nbsp;        LocalDateTime startOfMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);</b>
+<b class="fc">&nbsp;        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);</b>
 &nbsp;
-<b class="nc">&nbsp;        List&lt;TransactionModel&gt; transactions = transactionRepository.findByUserLoginAndDateBetween(</b>
-<b class="nc">&nbsp;                user.getLogin(), startOfMonth, endOfMonth);</b>
+<b class="fc">&nbsp;        List&lt;TransactionModel&gt; transactions = transactionRepository.findByUserLoginAndDateBetween(</b>
+<b class="fc">&nbsp;                user.getLogin(), startOfMonth, endOfMonth);</b>
 &nbsp;
-<b class="nc">&nbsp;        if (transactions.isEmpty()) {</b>
-<b class="nc">&nbsp;            System.out.println(&quot;No transactions found for user: &quot; + user.getLogin() + &quot; in the current month.&quot;);</b>
+<b class="fc">&nbsp;        if (transactions.isEmpty()) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;No transactions found for user: &quot; + user.getLogin() + &quot; in the current month.&quot;);</b>
 &nbsp;            return; // Exit the method if there are no transactions
 &nbsp;        }
 &nbsp;
-<b class="nc">&nbsp;        double totalIncome = transactions.stream()</b>
-<b class="nc">&nbsp;                .filter(t -&gt; t.getType() == TransactionModel.TransactionType.INCOME)</b>
-<b class="nc">&nbsp;                .mapToDouble(TransactionModel::getAmount)</b>
-<b class="nc">&nbsp;                .sum();</b>
+<b class="fc">&nbsp;        double totalIncome = transactions.stream()</b>
+<b class="fc">&nbsp;                .filter(t -&gt; t.getType() == TransactionModel.TransactionType.INCOME)</b>
+<b class="fc">&nbsp;                .mapToDouble(TransactionModel::getAmount)</b>
+<b class="fc">&nbsp;                .sum();</b>
 &nbsp;
-<b class="nc">&nbsp;        double totalExpenses = transactions.stream()</b>
-<b class="nc">&nbsp;                .filter(t -&gt; t.getType() == TransactionModel.TransactionType.EXPENSE)</b>
-<b class="nc">&nbsp;                .mapToDouble(TransactionModel::getAmount)</b>
-<b class="nc">&nbsp;                .sum();</b>
+<b class="fc">&nbsp;        double totalExpenses = transactions.stream()</b>
+<b class="fc">&nbsp;                .filter(t -&gt; t.getType() == TransactionModel.TransactionType.EXPENSE)</b>
+<b class="fc">&nbsp;                .mapToDouble(TransactionModel::getAmount)</b>
+<b class="fc">&nbsp;                .sum();</b>
 &nbsp;
-<b class="nc">&nbsp;        System.out.println(&quot;User: &quot; + user.getLogin() + &quot;, Total Income: &quot; + totalIncome + &quot;, Total Expenses: &quot; + totalExpenses);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;User: &quot; + user.getLogin() + &quot;, Total Income: &quot; + totalIncome + &quot;, Total Expenses: &quot; + totalExpenses);</b>
 &nbsp;
-<b class="nc">&nbsp;        if (totalExpenses &gt; totalIncome) {</b>
+<b class="fc">&nbsp;        if (totalExpenses &gt; totalIncome) {</b>
 &nbsp;            String message;
-<b class="nc">&nbsp;            if (totalIncome == 0) {</b>
-<b class="nc">&nbsp;                message = String.format(&quot;Alert: You have expenses ($%.2f) but no income recorded this month.&quot;, totalExpenses);</b>
+<b class="fc">&nbsp;            if (totalIncome == 0) {</b>
+<b class="fc">&nbsp;                message = String.format(&quot;Alert: You have expenses ($%.2f) but no income recorded this month.&quot;, totalExpenses);</b>
 &nbsp;            } else {
-<b class="nc">&nbsp;                message = String.format(&quot;Alert: Your expenses ($%.2f) have exceeded your income ($%.2f) this month.&quot;,</b>
-<b class="nc">&nbsp;                        totalExpenses, totalIncome);</b>
+<b class="fc">&nbsp;                message = String.format(&quot;Alert: Your expenses ($%.2f) have exceeded your income ($%.2f) this month.&quot;,</b>
+<b class="fc">&nbsp;                        totalExpenses, totalIncome);</b>
 &nbsp;            }
-<b class="nc">&nbsp;            addMessage(user, message);</b>
-<b class="nc">&nbsp;            System.out.println(&quot;Overspending alert created for user: &quot; + user.getLogin());</b>
+<b class="fc">&nbsp;            addMessage(user, message);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Overspending alert created for user: &quot; + user.getLogin());</b>
 &nbsp;        } else {
-<b class="nc">&nbsp;            System.out.println(&quot;No overspending detected for user: &quot; + user.getLogin());</b>
+<b class="fc">&nbsp;            System.out.println(&quot;No overspending detected for user: &quot; + user.getLogin());</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // Check for large individual expenses
-<b class="nc">&nbsp;        double largestExpense = transactions.stream()</b>
-<b class="nc">&nbsp;                .filter(t -&gt; t.getType() == TransactionModel.TransactionType.EXPENSE)</b>
-<b class="nc">&nbsp;                .mapToDouble(TransactionModel::getAmount)</b>
-<b class="nc">&nbsp;                .max()</b>
-<b class="nc">&nbsp;                .orElse(0);</b>
+<b class="fc">&nbsp;        double largestExpense = transactions.stream()</b>
+<b class="fc">&nbsp;                .filter(t -&gt; t.getType() == TransactionModel.TransactionType.EXPENSE)</b>
+<b class="fc">&nbsp;                .mapToDouble(TransactionModel::getAmount)</b>
+<b class="fc">&nbsp;                .max()</b>
+<b class="fc">&nbsp;                .orElse(0);</b>
 &nbsp;
-<b class="nc">&nbsp;        if (totalIncome &gt; 0 &amp;&amp; largestExpense &gt; totalIncome * 0.5) {</b>
-<b class="nc">&nbsp;            String message = String.format(&quot;Alert: You have a large individual expense of $%.2f, which is more than 50%% of your monthly income.&quot;,</b>
-<b class="nc">&nbsp;                    largestExpense);</b>
-<b class="nc">&nbsp;            addMessage(user, message);</b>
-<b class="nc">&nbsp;            System.out.println(&quot;Large expense alert created for user: &quot; + user.getLogin());</b>
-<b class="nc">&nbsp;        } else if (totalIncome == 0 &amp;&amp; largestExpense &gt; 0) {</b>
-<b class="nc">&nbsp;            String message = String.format(&quot;Alert: You have a large individual expense of $%.2f with no income recorded this month.&quot;,</b>
-<b class="nc">&nbsp;                    largestExpense);</b>
-<b class="nc">&nbsp;            addMessage(user, message);</b>
-<b class="nc">&nbsp;            System.out.println(&quot;Large expense alert created for user: &quot; + user.getLogin());</b>
+<b class="fc">&nbsp;        if (totalIncome &gt; 0 &amp;&amp; largestExpense &gt; totalIncome * 0.5) {</b>
+<b class="fc">&nbsp;            String message = String.format(&quot;Alert: You have a large individual expense of $%.2f, which is more than 50%% of your monthly income.&quot;,</b>
+<b class="fc">&nbsp;                    largestExpense);</b>
+<b class="fc">&nbsp;            addMessage(user, message);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Large expense alert created for user: &quot; + user.getLogin());</b>
+<b class="pc">&nbsp;        } else if (totalIncome == 0 &amp;&amp; largestExpense &gt; 0) {</b>
+<b class="fc">&nbsp;            String message = String.format(&quot;Alert: You have a large individual expense of $%.2f with no income recorded this month.&quot;,</b>
+<b class="fc">&nbsp;                    largestExpense);</b>
+<b class="fc">&nbsp;            addMessage(user, message);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Large expense alert created for user: &quot; + user.getLogin());</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;}
@@ -342,7 +346,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-29 21:58</div>
+    <div style="float:right;">generated on 2024-10-30 18:23</div>
 </div>
 </body>
 </html>
