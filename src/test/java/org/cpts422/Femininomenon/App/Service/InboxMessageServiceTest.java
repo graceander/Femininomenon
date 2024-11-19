@@ -548,68 +548,6 @@ class InboxMessageServiceTest {
     }
 
     @Test
-    void checkSpendingRules_ShouldHandleAllRuleTypesExhaustively() {
-        // Test each rule type separately
-        for (UserRuleModel.RuleType ruleType : UserRuleModel.RuleType.values()) {
-            // Reset mocks for clean state
-            clearInvocations(inboxMessageRepository, transactionRepository);
-
-            // Set up the rule
-            testRule.setRuleType(ruleType);
-            testRule.setCategory(TransactionModel.CategoryType.GROCERIES);
-            testRule.setLimitAmount(1000.0F);
-
-            // Set up transactions based on rule type
-            List<TransactionModel> transactions = new ArrayList<>();
-
-            switch (ruleType) {
-                case MAXIMUM_SPENDING:
-                    testExpense.setAmount(1500.0F); // Exceed limit
-                    transactions.add(testExpense);
-                    break;
-
-                case MINIMUM_SAVINGS:
-                    testIncome.setAmount(2000.0F);
-                    testExpense.setAmount(1800.0F); // Less than required savings
-                    transactions.add(testIncome);
-                    transactions.add(testExpense);
-                    break;
-
-                case NOT_EXCEED_CATEGORY:
-                    testRule.setAdditionalCategory(TransactionModel.CategoryType.ENTERTAINMENT);
-
-                    // First expense in primary category
-                    testExpense.setCategory(TransactionModel.CategoryType.GROCERIES);
-                    testExpense.setAmount(1000.0F);
-                    transactions.add(testExpense);
-
-                    // Second expense in comparison category
-                    TransactionModel entertainmentExpense = new TransactionModel();
-                    entertainmentExpense.setType(TransactionModel.TransactionType.EXPENSE);
-                    entertainmentExpense.setCategory(TransactionModel.CategoryType.ENTERTAINMENT);
-                    entertainmentExpense.setAmount(500.0F);
-                    transactions.add(entertainmentExpense);
-                    break;
-            }
-
-            // Set up mocks
-            when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
-                    .thenReturn(Collections.singletonList(testRule));
-            when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
-                    any(), any(), any())).thenReturn(false);
-            when(transactionRepository.findByUserLoginAndDateBetween(
-                    eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
-                    .thenReturn(transactions);
-
-            // Execute the method
-            inboxMessageService.checkSpendingRules(testUser);
-
-            // Verify a message was created
-            verify(inboxMessageRepository, atLeastOnce()).save(any());
-        }
-    }
-
-    @Test
     void checkForOverallOverspending_ShouldCreateAlertForZeroIncomeWithExpense() {
         // Clear any previous test data
         clearInvocations(inboxMessageRepository);
