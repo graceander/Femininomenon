@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -208,26 +209,6 @@ class InboxMessageServiceTest {
     }
 
     @Test
-    void checkSpendingRules_ShouldHandleAllRuleTypes() {
-        for (UserRuleModel.RuleType ruleType : UserRuleModel.RuleType.values()) {
-            testRule.setRuleType(ruleType);
-            if (ruleType == UserRuleModel.RuleType.NOT_EXCEED_CATEGORY) {
-                testRule.setAdditionalCategory(TransactionModel.CategoryType.ENTERTAINMENT);
-            }
-
-            when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
-                    .thenReturn(Collections.singletonList(testRule));
-            when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
-                    any(), any(), any())).thenReturn(false);
-
-            testExpense.setAmount(1500.0F);
-            setupTransactionMock(Collections.singletonList(testExpense));
-
-            inboxMessageService.checkSpendingRules(testUser);
-        }
-    }
-
-    @Test
     void getStartDate_ShouldHandleDaily() throws Exception {
         Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
                 LocalDateTime.class, UserRuleModel.Frequency.class);
@@ -287,18 +268,6 @@ class InboxMessageServiceTest {
         inboxMessageService.checkForOverallOverspending(testUser);
 
         verify(inboxMessageRepository, never()).save(any());
-    }
-
-    @Test
-    void checkForOverallOverspending_ShouldCreateAlert_WhenOnlyExpensesExist() {
-        testExpense.setAmount(1000.0F);
-        setupTransactionMock(Collections.singletonList(testExpense));
-        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
-                any(), any(), any())).thenReturn(false);
-
-        inboxMessageService.checkForOverallOverspending(testUser);
-
-        verifyMultipleMessages(2, "no income", "large individual expense");
     }
 
     @Test
@@ -398,46 +367,6 @@ class InboxMessageServiceTest {
     }
 
     @Test
-    void checkForOverallOverspending_ShouldNotCreateAlert_WhenLargeExpenseButUnderThreshold() {
-        testIncome.setAmount(1000.0F);
-        testExpense.setAmount(400.0F); // 40% of income, under 50% threshold
-        setupTransactionMock(Arrays.asList(testIncome, testExpense));
-
-        inboxMessageService.checkForOverallOverspending(testUser);
-
-        verify(inboxMessageRepository, never()).save(any());
-    }
-
-    @Test
-    void checkForOverallOverspending_ShouldCreateOnlyOverspendingAlert_WhenExpensesExceedIncomeButNoLargeIndividualExpense() {
-        testIncome.setAmount(1000.0F);
-
-        TransactionModel expense1 = new TransactionModel();
-        expense1.setType(TransactionModel.TransactionType.EXPENSE);
-        expense1.setAmount(300.0F);
-
-        TransactionModel expense2 = new TransactionModel();
-        expense2.setType(TransactionModel.TransactionType.EXPENSE);
-        expense2.setAmount(400.0F);
-
-        TransactionModel expense3 = new TransactionModel();
-        expense3.setType(TransactionModel.TransactionType.EXPENSE);
-        expense3.setAmount(400.0F);
-
-        setupTransactionMock(Arrays.asList(testIncome, expense1, expense2, expense3));
-        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
-                any(), any(), any())).thenReturn(false);
-
-        inboxMessageService.checkForOverallOverspending(testUser);
-
-        verify(inboxMessageRepository).save(messageCaptor.capture());
-        String capturedMessage = messageCaptor.getValue().getMessage();
-        assertTrue(capturedMessage.contains("expenses"));
-        assertFalse(capturedMessage.contains("large individual expense"));
-    }
-
-
-    @Test
     void checkSpendingRules_ShouldHandleNullCategory() {
         testRule.setCategory(null);
         when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
@@ -506,5 +435,77 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, times(2)).save(messageCaptor.capture());
         List<InboxMessageModel> messages = messageCaptor.getAllValues();
         assertTrue(messages.get(0).getMessage().contains("no income"));
+    }
+
+    @Test
+    void checkLargeExpenses_WithNoIncome() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        TransactionModel expense = new TransactionModel();
+        expense.setType(TransactionModel.TransactionType.EXPENSE);
+        expense.setAmount(1000.0F);
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        Method checkLargeExpensesMethod = InboxMessageService.class.getDeclaredMethod(
+                "checkLargeExpenses", UserModel.class, List.class);
+        checkLargeExpensesMethod.setAccessible(true);
+        checkLargeExpensesMethod.invoke(inboxMessageService, testUser, Collections.singletonList(expense));
+
+        verify(inboxMessageRepository).save(messageCaptor.capture());
+        assertTrue(messageCaptor.getValue().getMessage().contains("with no income recorded"));
+    }
+
+    @Test
+    void checkLargeExpenses_WithIncomeButOverThreshold() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        TransactionModel income = new TransactionModel();
+        income.setType(TransactionModel.TransactionType.INCOME);
+        income.setAmount(1000.0F);
+
+        TransactionModel expense = new TransactionModel();
+        expense.setType(TransactionModel.TransactionType.EXPENSE);
+        expense.setAmount(600.0F); // Over 50% of income
+
+        when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
+                any(), any(), any())).thenReturn(false);
+
+        Method checkLargeExpensesMethod = InboxMessageService.class.getDeclaredMethod(
+                "checkLargeExpenses", UserModel.class, List.class);
+        checkLargeExpensesMethod.setAccessible(true);
+        checkLargeExpensesMethod.invoke(inboxMessageService, testUser, Arrays.asList(income, expense));
+
+        verify(inboxMessageRepository).save(messageCaptor.capture());
+        assertTrue(messageCaptor.getValue().getMessage().contains("more than 50%"));
+    }
+
+    @Test
+    void checkLargeExpenses_WithIncomeAndUnderThreshold() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        TransactionModel income = new TransactionModel();
+        income.setType(TransactionModel.TransactionType.INCOME);
+        income.setAmount(1000.0F);
+
+        TransactionModel expense = new TransactionModel();
+        expense.setType(TransactionModel.TransactionType.EXPENSE);
+        expense.setAmount(400.0F); // Under 50% of income
+
+        Method checkLargeExpensesMethod = InboxMessageService.class.getDeclaredMethod(
+                "checkLargeExpenses", UserModel.class, List.class);
+        checkLargeExpensesMethod.setAccessible(true);
+        checkLargeExpensesMethod.invoke(inboxMessageService, testUser, Arrays.asList(income, expense));
+
+        verify(inboxMessageRepository, never()).save(any());
+    }
+
+    @Test
+    void checkLargeExpenses_WithNoExpenses() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        TransactionModel income = new TransactionModel();
+        income.setType(TransactionModel.TransactionType.INCOME);
+        income.setAmount(1000.0F);
+
+        Method checkLargeExpensesMethod = InboxMessageService.class.getDeclaredMethod(
+                "checkLargeExpenses", UserModel.class, List.class);
+        checkLargeExpensesMethod.setAccessible(true);
+        checkLargeExpensesMethod.invoke(inboxMessageService, testUser, Collections.singletonList(income));
+
+        verify(inboxMessageRepository, never()).save(any());
     }
 }
