@@ -139,8 +139,17 @@ public class ScheduledTransactionService {
                 newTransactionType,
                 scheduledTransaction.getAccount());
 
-        scheduledTransaction.setRecentPayment(nextPaymentDate);
-        return newTransaction;
+        if (newTransaction != null) {
+            scheduledTransaction.setRecentPayment(nextPaymentDate);
+            return newTransaction;
+        }
+        else {
+            try {
+                throw new Exception("Error creating new transaction");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
 
