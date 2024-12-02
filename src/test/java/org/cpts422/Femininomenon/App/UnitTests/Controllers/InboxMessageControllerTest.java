@@ -2,9 +2,10 @@
  * Grace Anderson
  * 11759304
  */
-package org.cpts422.Femininomenon.App.Controllers;
+package org.cpts422.Femininomenon.App.UnitTests.Controllers;
 
 // Imports
+import org.cpts422.Femininomenon.App.Controllers.InboxMessageController;
 import org.cpts422.Femininomenon.App.Models.InboxMessageModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Service.InboxMessageService;

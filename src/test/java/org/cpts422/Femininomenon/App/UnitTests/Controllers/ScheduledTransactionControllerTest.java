@@ -1,5 +1,6 @@
-package org.cpts422.Femininomenon.App.Controllers;
+package org.cpts422.Femininomenon.App.UnitTests.Controllers;
 
+import org.cpts422.Femininomenon.App.Controllers.ScheduledTransactionController;
 import org.cpts422.Femininomenon.App.Models.ScheduledTransactionModel;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
@@ -55,9 +56,7 @@ public class ScheduledTransactionControllerTest {
         void testNormalViewScheduledTransactions() {
             when(usersService.findByLogin("Bri")).thenReturn(mockUser);
             when(scheduledTransactionService.getTransactionsByUser("Bri")).thenReturn(List.of(new ScheduledTransactionModel(mockUser, "Weekly", LocalDateTime.now(), 100.0f, ScheduledTransactionModel.CategoryType.GROCERIES, "Grocery shopping", ScheduledTransactionModel.TransactionType.EXPENSE, "Cash")));
-            //verify(model).addAttribute("user", mockUser);
             String view = scheduledTransactionController.ViewScheduledTransactionsPage("Bri", model);
-            //verify(model).addAttribute("scheduledTransactions", List.of(new ScheduledTransactionModel(mockUser, "Weekly", LocalDateTime.now(), 100.0f, ScheduledTransactionModel.CategoryType.GROCERIES, "Grocery shopping", ScheduledTransactionModel.TransactionType.EXPENSE, "Cash")));
             assertEquals("viewScheduledTransactions", view);
         }
 
@@ -73,7 +72,6 @@ public class ScheduledTransactionControllerTest {
         void testNullTransactionsViewScheduledTransactions() {
             when(usersService.findByLogin("Bri")).thenReturn(mockUser);
             when(scheduledTransactionService.getTransactionsByUser("Bri")).thenReturn(null);
-            //verify(model).addAttribute("user", mockUser);
             String view = scheduledTransactionController.ViewScheduledTransactionsPage("Bri", model);
             verify(model).addAttribute("message", "No scheduled transactions found for this user.");
             assertEquals("viewScheduledTransactions", view);
@@ -115,7 +113,6 @@ public class ScheduledTransactionControllerTest {
             when(usersService.findByLogin("Bri")).thenReturn(mockUser);
             String view = scheduledTransactionController.submitScheduledTransaction("Bri", "Monthly", recentPayment, 100.0f, "Groceries", "Grocery shopping", ScheduledTransactionModel.TransactionType.EXPENSE, "Cash");
             verify(scheduledTransactionService, times(1)).saveTransaction(any(ScheduledTransactionModel.class));
-            //verify(transactionService, times(12)).saveTransaction(any(TransactionModel.class));
             assertEquals("redirect:/viewScheduledTransactions?login=Bri", view);
         }
 
@@ -269,22 +266,4 @@ public class ScheduledTransactionControllerTest {
             assertEquals("error", view);
         }
     }
-
-
-//    @Test
-//    void testUpdateTransactionErrorUser() {
-//        UserModel otherUser = new UserModel();
-//        otherUser.setLogin("OtherUser");
-//        TransactionModel transaction = new TransactionModel(otherUser, LocalDateTime.now(), 100.0f,
-//                TransactionModel.CategoryType.GROCERIES, "Grocery shopping",
-//                TransactionModel.TransactionType.EXPENSE, "Cash");
-//        when(transactionService.getTransactionById(1L)).thenReturn(transaction);
-//        String view = scheduledTransactionController.updateScheduledTransaction(1L, "Matt", "2024-09-10T10:15:30",
-//                200.0f, "Utilities", "Utility bill", ScheduledTransactionModel.TransactionType.EXPENSE, "Bank", model);
-//        verify(model).addAttribute("error", "Transaction does not belong to the user");
-//        assertEquals("error", view);
-//    }
-//
-
-
 }

@@ -1,7 +1,9 @@
-package org.cpts422.Femininomenon.App.Models;
+package org.cpts422.Femininomenon.App.UnitTests.Models;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.cpts422.Femininomenon.App.Models.TransactionModel.CategoryType;
+import org.cpts422.Femininomenon.App.Models.UserModel;
+import org.cpts422.Femininomenon.App.Models.UserRuleModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 class UserRuleModelTest {

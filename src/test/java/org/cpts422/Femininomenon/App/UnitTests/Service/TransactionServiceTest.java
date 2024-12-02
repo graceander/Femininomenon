@@ -2,11 +2,13 @@
  * Grace Anderson
  * 11759304
  */
-package org.cpts422.Femininomenon.App.Service;
+package org.cpts422.Femininomenon.App.UnitTests.Service;
 
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Repository.TransactionRepository;
+import org.cpts422.Femininomenon.App.Service.InboxMessageService;
+import org.cpts422.Femininomenon.App.Service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -575,7 +577,6 @@ class TransactionServiceTest {
      * Tests category spending calculation when all transactions are filtered out.
      * Verifies that when all transactions are non-expense types (income in this case),
      * the resulting category map is empty rather than containing zero values.
-     *
      * This test is important for ensuring proper handling of edge cases where:
      * 1. All transactions are filtered out due to type
      * 2. The system returns an empty map instead of a map with zero values

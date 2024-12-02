@@ -1,5 +1,7 @@
-package org.cpts422.Femininomenon.App.Models;
+package org.cpts422.Femininomenon.App.UnitTests.Models;
 
+import org.cpts422.Femininomenon.App.Models.TransactionModel;
+import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -170,7 +172,6 @@ class TransactionModelTest {
      * - Type comparison
      * - Field-by-field comparison
      * - Null field handling for all the fields
-     *
      * Tests various combinations of equal and unequal transactions,
      * including cases where individual fields differ and cases with
      * null values in different fields.

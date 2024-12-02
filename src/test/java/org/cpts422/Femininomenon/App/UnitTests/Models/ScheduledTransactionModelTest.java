@@ -1,5 +1,7 @@
-package org.cpts422.Femininomenon.App.Models;
+package org.cpts422.Femininomenon.App.UnitTests.Models;
 
+import org.cpts422.Femininomenon.App.Models.ScheduledTransactionModel;
+import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

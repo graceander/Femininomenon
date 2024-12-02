@@ -1,9 +1,10 @@
-package org.cpts422.Femininomenon.App.Service;
+package org.cpts422.Femininomenon.App.UnitTests.Service;
 
 import org.cpts422.Femininomenon.App.Models.ScheduledTransactionModel;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Repository.ScheduledTransactionRepository;
+import org.cpts422.Femininomenon.App.Service.ScheduledTransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

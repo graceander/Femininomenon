@@ -2,8 +2,9 @@
  * Grace Anderson
  * 11759304
  */
-package org.cpts422.Femininomenon.App.Service;
+package org.cpts422.Femininomenon.App.UnitTests.Service;
 
+import org.cpts422.Femininomenon.App.Service.CurrencyConversionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,6 +1,7 @@
-package org.cpts422.Femininomenon.App.Controllers;
+package org.cpts422.Femininomenon.App.UnitTests.Controllers;
 
 
+import org.cpts422.Femininomenon.App.Controllers.UserController;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Service.UsersService;
 import org.junit.jupiter.api.BeforeEach;
