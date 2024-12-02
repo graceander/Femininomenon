@@ -1,6 +1,8 @@
-package org.cpts422.Femininomenon.App.Controllers;
+package org.cpts422.Femininomenon.App.UnitTests.Controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.cpts422.Femininomenon.App.Controllers.UserRuleController;
 import org.cpts422.Femininomenon.App.Models.TransactionModel;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Models.UserRuleModel;

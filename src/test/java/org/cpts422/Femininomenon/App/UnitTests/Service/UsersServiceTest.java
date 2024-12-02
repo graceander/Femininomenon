@@ -1,8 +1,8 @@
-package org.cpts422.Femininomenon.App.Service;
+package org.cpts422.Femininomenon.App.UnitTests.Service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Repository.UserRepository;
+import org.cpts422.Femininomenon.App.Service.UsersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

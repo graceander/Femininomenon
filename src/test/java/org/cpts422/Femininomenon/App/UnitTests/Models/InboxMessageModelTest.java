@@ -2,8 +2,10 @@
  * Grace Anderson
  * 11759304
  */
-package org.cpts422.Femininomenon.App.Models;
+package org.cpts422.Femininomenon.App.UnitTests.Models;
 
+import org.cpts422.Femininomenon.App.Models.InboxMessageModel;
+import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;

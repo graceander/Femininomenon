@@ -1,4 +1,4 @@
-package org.cpts422.Femininomenon.App.Models;
+package org.cpts422.Femininomenon.App.UnitTests.Models;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.cpts422.Femininomenon.App.Models.UserModel;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
+
 class UserModelTest {
     private UserModel user;
 

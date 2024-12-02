@@ -1,6 +1,7 @@
-package org.cpts422.Femininomenon.App.Service;
+package org.cpts422.Femininomenon.App.UnitTests.Service;
 import org.cpts422.Femininomenon.App.Models.UserRuleModel;
 import org.cpts422.Femininomenon.App.Repository.UserRuleRepository;
+import org.cpts422.Femininomenon.App.Service.UserRuleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

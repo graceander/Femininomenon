@@ -1,7 +1,9 @@
-package org.cpts422.Femininomenon.App.Service;
+package org.cpts422.Femininomenon.App.UnitTests.Service;
 
 import org.cpts422.Femininomenon.App.Models.*;
 import org.cpts422.Femininomenon.App.Repository.*;
+import org.cpts422.Femininomenon.App.Service.InboxMessageService;
+import org.cpts422.Femininomenon.App.Service.UserRuleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
