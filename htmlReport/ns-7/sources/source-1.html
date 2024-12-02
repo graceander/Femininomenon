@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > ScheduledTransactionRepository</title>
+  <title>Coverage Report > UserRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,16 +22,25 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.cpts422.Femininomenon.App.Repository</a>
 </div>
 
-<h1>Coverage Summary for Class: ScheduledTransactionRepository (org.cpts422.Femininomenon.App.Repository)</h1>
+<h1>Coverage Summary for Class: UserRepository (org.cpts422.Femininomenon.App.Repository)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 </tr>
+  <tr>
+    <td class="name">UserRepository$MockitoMock$AbEXVFTw</td>
+  </tr>
+  <tr>
+    <td class="name">UserRepository$MockitoMock$AbEXVFTw$auxiliary$2b7gEADU</td>
+  </tr>
+  <tr>
+    <td class="name">UserRepository$MockitoMock$AbEXVFTw$auxiliary$wwMZndnz</td>
+  </tr>
 <tr>
-  <td class="name">ScheduledTransactionRepository</td>
+  <td class="name"><strong>Total</strong></td>
 </tr>
-
 </table>
 
 <br/>
@@ -41,15 +50,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Repository;
 &nbsp;
-&nbsp;import org.cpts422.Femininomenon.App.Models.ScheduledTransactionModel;
+&nbsp;import org.cpts422.Femininomenon.App.Models.UserModel;
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import java.util.Optional;
 &nbsp;
-&nbsp;import java.util.List;
-&nbsp;
-&nbsp;
-&nbsp;public interface ScheduledTransactionRepository extends JpaRepository&lt;ScheduledTransactionModel, Long&gt; {
-&nbsp;    List&lt;ScheduledTransactionModel&gt; findByUserLogin(String userLogin);
-&nbsp;
+&nbsp;public interface UserRepository extends JpaRepository&lt;UserModel, Integer&gt; {
+&nbsp;    Optional&lt;UserModel&gt; findByLoginAndPassword(String login, String password);
+&nbsp;    Optional&lt;UserModel&gt; findByLogin(String login);
 &nbsp;}
 </code>
 </pre>
@@ -74,7 +81,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-30 20:22</div>
+    <div style="float:right;">generated on 2024-10-30 20:43</div>
 </div>
 </body>
 </html>

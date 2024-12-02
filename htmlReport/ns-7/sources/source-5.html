@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > TransactionRepository</title>
+  <title>Coverage Report > InboxMessageRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,7 +22,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.cpts422.Femininomenon.App.Repository</a>
 </div>
 
-<h1>Coverage Summary for Class: TransactionRepository (org.cpts422.Femininomenon.App.Repository)</h1>
+<h1>Coverage Summary for Class: InboxMessageRepository (org.cpts422.Femininomenon.App.Repository)</h1>
 
 <table class="coverageStats">
 
@@ -30,13 +30,13 @@ Current scope:     <a href="../../index.html">all classes</a>
   <th class="name">Class</th>
 </tr>
   <tr>
-    <td class="name">TransactionRepository$MockitoMock$sjRHxXAC</td>
+    <td class="name">InboxMessageRepository$MockitoMock$Bew5volA</td>
   </tr>
   <tr>
-    <td class="name">TransactionRepository$MockitoMock$sjRHxXAC$auxiliary$J2x0ns8q</td>
+    <td class="name">InboxMessageRepository$MockitoMock$Bew5volA$auxiliary$N5Hou65F</td>
   </tr>
   <tr>
-    <td class="name">TransactionRepository$MockitoMock$sjRHxXAC$auxiliary$Yafgt9EL</td>
+    <td class="name">InboxMessageRepository$MockitoMock$Bew5volA$auxiliary$u9qUeacv</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -50,16 +50,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.cpts422.Femininomenon.App.Repository;
 &nbsp;
-&nbsp;import org.cpts422.Femininomenon.App.Models.TransactionModel;
+&nbsp;import org.cpts422.Femininomenon.App.Models.InboxMessageModel;
+&nbsp;import org.cpts422.Femininomenon.App.Models.UserModel;
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
 &nbsp;import java.time.LocalDateTime;
 &nbsp;import java.util.List;
 &nbsp;
-&nbsp;
-&nbsp;public interface TransactionRepository extends JpaRepository&lt;TransactionModel, Long&gt; {
-&nbsp;    List&lt;TransactionModel&gt; findByUserLogin(String userLogin);
-&nbsp;    List&lt;TransactionModel&gt; findByUserLoginAndDateBetween(String userLogin, LocalDateTime startDate, LocalDateTime endDate);
-&nbsp;
+&nbsp;@Repository
+&nbsp;public interface InboxMessageRepository extends JpaRepository&lt;InboxMessageModel, Long&gt; {
+&nbsp;    List&lt;InboxMessageModel&gt; findByUser(UserModel user);
+&nbsp;    List&lt;InboxMessageModel&gt; findByUserAndIsReadFalse(UserModel user);
+&nbsp;    boolean existsByUserAndMessageContainingAndTimestampAfter(UserModel user, String messageContent, LocalDateTime timestamp);
 &nbsp;}
 </code>
 </pre>
@@ -84,7 +87,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-30 20:22</div>
+    <div style="float:right;">generated on 2024-10-30 20:43</div>
 </div>
 </body>
 </html>
