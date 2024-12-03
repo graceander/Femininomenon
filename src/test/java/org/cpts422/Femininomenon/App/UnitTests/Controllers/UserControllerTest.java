@@ -27,6 +27,7 @@ class UserControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    //mock mvc extension to spring framework
 
     // this test function will test if it can get to the register page
     @Test
@@ -73,9 +74,7 @@ class UserControllerTest {
         assertEquals("index", viewName);
     }
 
-
-
-
+    
     // this will test the login if it's successful
     @Test
     public void testLoginSuccessful() {

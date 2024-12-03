@@ -4,25 +4,25 @@ import org.cpts422.Femininomenon.App.Models.*;
 import org.cpts422.Femininomenon.App.Repository.*;
 import org.cpts422.Femininomenon.App.Service.InboxMessageService;
 import org.cpts422.Femininomenon.App.Service.UserRuleService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
+import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for InboxMessageService. Tests the functionality of message handling,
+ * spending rule checks, and transaction analysis.
+ */
 @ExtendWith(MockitoExtension.class)
 class InboxMessageServiceTest {
     @Mock
@@ -43,6 +43,10 @@ class InboxMessageServiceTest {
     private TransactionModel testExpense;
     private TransactionModel testIncome;
 
+    /**
+     * Sets up test data before each test method execution.
+     * Initializes test user, rule, and transaction models.
+     */
     @BeforeEach
     void setUp() {
         testUser = new UserModel();
@@ -61,17 +65,30 @@ class InboxMessageServiceTest {
         testIncome.setType(TransactionModel.TransactionType.INCOME);
     }
 
+    /**
+     * Helper method to set up transaction repository mock with specified transactions.
+     * @param transactions List of transactions to be returned by the mock
+     */
     private void setupTransactionMock(List<TransactionModel> transactions) {
         when(transactionRepository.findByUserLoginAndDateBetween(
                 eq(testUser.getLogin()), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(transactions);
     }
 
+    /**
+     * Helper method to verify that a saved message contains expected content.
+     * @param expectedContent the content that should be present in the message
+     */
     private void verifyMessageContains(String expectedContent) {
         verify(inboxMessageRepository).save(messageCaptor.capture());
         assertTrue(messageCaptor.getValue().getMessage().contains(expectedContent));
     }
 
+    /**
+     * Helper method to verify multiple messages were saved with expected content.
+     * @param expectedCalls number of expected save calls
+     * @param messageContents array of expected message contents
+     */
     private void verifyMultipleMessages(int expectedCalls, String... messageContents) {
         verify(inboxMessageRepository, times(expectedCalls)).save(messageCaptor.capture());
         List<InboxMessageModel> messages = messageCaptor.getAllValues();
@@ -80,6 +97,9 @@ class InboxMessageServiceTest {
         }
     }
 
+    /**
+     * Tests retrieval of inbox messages for a specific user.
+     */
     @Test
     void getInboxMessages_ShouldReturnMessages() {
         List<InboxMessageModel> expectedMessages = Arrays.asList(
@@ -94,6 +114,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository).findByUser(testUser);
     }
 
+    /**
+     * Tests marking a single message as read.
+     */
     @Test
     void markMessageAsRead_ShouldMarkMessageAsRead() {
         InboxMessageModel message = new InboxMessageModel(testUser, "Test message");
@@ -107,12 +130,18 @@ class InboxMessageServiceTest {
         assertTrue(messageCaptor.getValue().isRead());
     }
 
+    /**
+     * Tests exception handling when marking a non-existent message as read.
+     */
     @Test
     void markMessageAsRead_ShouldThrowException_WhenMessageNotFound() {
         when(inboxMessageRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(RuntimeException.class, () -> inboxMessageService.markMessageAsRead(1L));
     }
 
+    /**
+     * Tests marking all unread messages as read for a specific user.
+     */
     @Test
     void markAllMessagesAsRead_ShouldMarkAllMessagesAsRead() {
         List<InboxMessageModel> unreadMessages = Arrays.asList(
@@ -127,6 +156,9 @@ class InboxMessageServiceTest {
         assertTrue(messagesListCaptor.getValue().stream().allMatch(InboxMessageModel::isRead));
     }
 
+    /**
+     * Tests alert creation when maximum spending limit is exceeded.
+     */
     @Test
     void checkSpendingRules_ShouldCreateAlert_WhenMaximumSpendingExceeded() {
         testRule.setRuleType(UserRuleModel.RuleType.MAXIMUM_SPENDING);
@@ -143,6 +175,9 @@ class InboxMessageServiceTest {
         verifyMessageContains("exceeded your monthly spending limit");
     }
 
+    /**
+     * Tests alert creation when minimum savings target is not met.
+     */
     @Test
     void checkSpendingRules_ShouldCreateAlert_WhenMinimumSavingsNotMet() {
         testRule.setRuleType(UserRuleModel.RuleType.MINIMUM_SAVINGS);
@@ -161,6 +196,9 @@ class InboxMessageServiceTest {
         verifyMessageContains("savings");
     }
 
+    /**
+     * Tests alert creation when category spending exceeds comparison category.
+     */
     @Test
     void checkSpendingRules_ShouldCreateAlert_WhenCategoryExceedsComparison() {
         testRule.setRuleType(UserRuleModel.RuleType.NOT_EXCEED_CATEGORY);
@@ -184,6 +222,9 @@ class InboxMessageServiceTest {
         verifyMessageContains("exceeded your spending");
     }
 
+    /**
+     * Tests alert creation when overall expenses exceed income.
+     */
     @Test
     void checkForOverallOverspending_ShouldCreateAlerts_WhenExpensesExceedIncome() {
         testIncome.setAmount(1000.0F);
@@ -197,6 +238,10 @@ class InboxMessageServiceTest {
         verifyMultipleMessages(2, "expenses", "large individual expense");
     }
 
+    /**
+     * Tests exception handling when frequency is null in getStartDate method.
+     * @throws Exception when method reflection or invocation fails
+     */
     @Test
     void getStartDate_ShouldThrowException_WhenFrequencyIsNull() throws Exception {
         Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
@@ -210,6 +255,10 @@ class InboxMessageServiceTest {
         assertEquals("Frequency cannot be null", exception.getCause().getMessage());
     }
 
+    /**
+     * Tests handling of daily frequency in getStartDate method.
+     * @throws Exception when method reflection or invocation fails
+     */
     @Test
     void getStartDate_ShouldHandleDaily() throws Exception {
         Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
@@ -223,6 +272,10 @@ class InboxMessageServiceTest {
         assertEquals(now.truncatedTo(ChronoUnit.DAYS), result);
     }
 
+    /**
+     * Tests handling of weekly frequency in getStartDate method.
+     * @throws Exception when method reflection or invocation fails
+     */
     @Test
     void getStartDate_ShouldHandleWeekly() throws Exception {
         Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
@@ -236,6 +289,10 @@ class InboxMessageServiceTest {
         assertEquals(now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)), result);
     }
 
+    /**
+     * Tests handling of unsupported frequency in getStartDate method.
+     * @throws Exception when method reflection or invocation fails
+     */
     @Test
     void getStartDate_ShouldHandleUnsupportedFrequency() throws Exception {
         Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
@@ -250,6 +307,9 @@ class InboxMessageServiceTest {
         assertEquals("Frequency cannot be null", exception.getCause().getMessage());
     }
 
+    /**
+     * Tests overspending check with empty transaction list.
+     */
     @Test
     void checkForOverallOverspending_ShouldHandleEmptyTransactions() {
         when(transactionRepository.findByUserLoginAndDateBetween(
@@ -261,6 +321,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests overspending check when expenses don't exceed income.
+     */
     @Test
     void checkForOverallOverspending_ShouldHandleNoOverspending() {
         testIncome.setAmount(2000.0F);
@@ -272,6 +335,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests spending rule check when alert message already exists.
+     */
     @Test
     void checkSpendingRules_ShouldSkipWhenMessageExists() {
         testRule.setRuleType(UserRuleModel.RuleType.MAXIMUM_SPENDING);
@@ -288,6 +354,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests overspending check when no large expenses are present.
+     */
     @Test
     void checkForOverallOverspending_ShouldNotCreateAlert_WhenNoLargeExpense() {
         testIncome.setAmount(1000.0F);
@@ -299,6 +368,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests message addition when message already exists.
+     */
     @Test
     void addMessage_ShouldHandleExistingMessage() {
         when(inboxMessageRepository.existsByUserAndMessageContainingAndTimestampAfter(
@@ -317,6 +389,9 @@ class InboxMessageServiceTest {
         }
     }
 
+    /**
+     * Tests spending rule check with null additional category.
+     */
     @Test
     void checkSpendingRules_ShouldHandleNullAdditionalCategory() {
         testRule.setRuleType(UserRuleModel.RuleType.NOT_EXCEED_CATEGORY);
@@ -329,6 +404,10 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests exception handling for unsupported frequency value in getStartDate.
+     * @throws Exception when method reflection or invocation fails
+     */
     @Test
     void getStartDate_ShouldThrowException_ForUnsupportedFrequencyValue() throws Exception {
         Method getStartDateMethod = InboxMessageService.class.getDeclaredMethod("getStartDate",
@@ -343,6 +422,9 @@ class InboxMessageServiceTest {
         assertTrue(exception.getCause().getMessage().contains("Unsupported frequency type"));
     }
 
+    /**
+     * Tests that no alert is created when category spending is lower than comparison.
+     */
     @Test
     void checkSpendingRules_ShouldNotCreateAlert_WhenNotExceedCategoryAndAmountLower() {
         testRule.setRuleType(UserRuleModel.RuleType.NOT_EXCEED_CATEGORY);
@@ -368,6 +450,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests spending rule check with null category.
+     */
     @Test
     void checkSpendingRules_ShouldHandleNullCategory() {
         testRule.setCategory(null);
@@ -380,6 +465,9 @@ class InboxMessageServiceTest {
         verify(transactionRepository, never()).findByUserLoginAndDateBetween(any(), any(), any());
     }
 
+    /**
+     * Tests that no alert is created when minimum savings target is met.
+     */
     @Test
     void checkSpendingRules_ShouldNotCreateAlert_WhenMinimumSavingsMet() {
         testRule.setRuleType(UserRuleModel.RuleType.MINIMUM_SAVINGS);
@@ -396,6 +484,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests maximum spending check with empty transaction list.
+     */
     @Test
     void checkSpendingRules_ShouldHandleMaximumSpendingWithNoTransactions() {
         testRule.setRuleType(UserRuleModel.RuleType.MAXIMUM_SPENDING);
@@ -410,6 +501,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests spending rule check with empty rules list.
+     */
     @Test
     void checkSpendingRules_ShouldHandleEmptyRulesList() {
         when(userRuleService.getRulesByUserLogin(testUser.getLogin()))
@@ -420,6 +514,9 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests overspending check when no income transactions are present.
+     */
     @Test
     void checkForOverallOverspending_ShouldHandleZeroIncome() {
         // Setup a transaction list with only expenses
@@ -439,6 +536,12 @@ class InboxMessageServiceTest {
         assertTrue(messages.get(0).getMessage().contains("no income"));
     }
 
+    /**
+     * Tests large expense check when no income transactions are present.
+     * @throws InvocationTargetException if the invoked method throws an exception
+     * @throws IllegalAccessException if the method is inaccessible
+     * @throws NoSuchMethodException if the method doesn't exist
+     */
     @Test
     void checkLargeExpenses_WithNoIncome() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         TransactionModel expense = new TransactionModel();
@@ -457,6 +560,12 @@ class InboxMessageServiceTest {
         assertTrue(messageCaptor.getValue().getMessage().contains("with no income recorded"));
     }
 
+    /**
+     * Tests large expense check when expenses exceed income threshold.
+     * @throws InvocationTargetException if the invoked method throws an exception
+     * @throws IllegalAccessException if the method is inaccessible
+     * @throws NoSuchMethodException if the method doesn't exist
+     */
     @Test
     void checkLargeExpenses_WithIncomeButOverThreshold() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         TransactionModel income = new TransactionModel();
@@ -479,6 +588,12 @@ class InboxMessageServiceTest {
         assertTrue(messageCaptor.getValue().getMessage().contains("more than 50%"));
     }
 
+    /**
+     * Tests large expense check when expenses are below income threshold.
+     * @throws InvocationTargetException if the invoked method throws an exception
+     * @throws IllegalAccessException if the method is inaccessible
+     * @throws NoSuchMethodException if the method doesn't exist
+     */
     @Test
     void checkLargeExpenses_WithIncomeAndUnderThreshold() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         TransactionModel income = new TransactionModel();
@@ -497,6 +612,12 @@ class InboxMessageServiceTest {
         verify(inboxMessageRepository, never()).save(any());
     }
 
+    /**
+     * Tests large expense check when no expense transactions are present.
+     * @throws InvocationTargetException if the invoked method throws an exception
+     * @throws IllegalAccessException if the method is inaccessible
+     * @throws NoSuchMethodException if the method doesn't exist
+     */
     @Test
     void checkLargeExpenses_WithNoExpenses() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         TransactionModel income = new TransactionModel();
