@@ -82,10 +82,11 @@ public class ScheduledTransactionService {
     // Method to convert ScheduledTransactionType to TransactionType
     public TransactionModel.TransactionType convertScheduledTypeToTransactionType(ScheduledTransactionModel scheduledTransaction) {
         TransactionModel.TransactionType newTransactionType = null;
-        if (scheduledTransaction.getType() == ScheduledTransactionModel.TransactionType.INCOME) {
+        var stType = scheduledTransaction.getType();
+        if (stType == ScheduledTransactionModel.TransactionType.INCOME) {
             return TransactionModel.TransactionType.INCOME;
         }
-        else if (scheduledTransaction.getType() == ScheduledTransactionModel.TransactionType.EXPENSE) {
+        else if (stType == ScheduledTransactionModel.TransactionType.EXPENSE) {
             return TransactionModel.TransactionType.EXPENSE;
         }
         else {
@@ -96,25 +97,26 @@ public class ScheduledTransactionService {
     // Method to convert ScheduledTransactionCategory to TransactionCategory
     public TransactionModel.CategoryType convertScheduledCategoryToTransactionCategory(ScheduledTransactionModel scheduledTransaction) {
         TransactionModel.CategoryType newTransactionCategory = null;
-        if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.ENTERTAINMENT) {
+        var stCategory = scheduledTransaction.getCategory();
+        if (stCategory == ScheduledTransactionModel.CategoryType.ENTERTAINMENT) {
             return TransactionModel.CategoryType.ENTERTAINMENT;
         }
-        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.GROCERIES) {
+        else if (stCategory == ScheduledTransactionModel.CategoryType.GROCERIES) {
             return TransactionModel.CategoryType.GROCERIES;
         }
-        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.OTHER) {
+        else if (stCategory == ScheduledTransactionModel.CategoryType.OTHER) {
             return TransactionModel.CategoryType.OTHER;
         }
-        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.HEALTHCARE) {
+        else if (stCategory == ScheduledTransactionModel.CategoryType.HEALTHCARE) {
             return TransactionModel.CategoryType.HEALTHCARE;
         }
-        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.SALARY) {
+        else if (stCategory == ScheduledTransactionModel.CategoryType.SALARY) {
             return TransactionModel.CategoryType.SALARY;
         }
-        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.TRANSPORTATION) {
+        else if (stCategory == ScheduledTransactionModel.CategoryType.TRANSPORTATION) {
             return TransactionModel.CategoryType.TRANSPORTATION;
         }
-        else if (scheduledTransaction.getCategory() == ScheduledTransactionModel.CategoryType.UTILITIES) {
+        else if (stCategory == ScheduledTransactionModel.CategoryType.UTILITIES) {
             return TransactionModel.CategoryType.UTILITIES;
         }
         else {
