@@ -168,6 +168,37 @@ public class InboxMessageSeleniumTest {
         assertEquals("Category", headers.get(3).getText());
     }
 
+    /**
+     * Tests marking a single message as read.
+     */
+    @Test
+    void testMarkMessageAsRead() {
+        loginToApplication();
+        createLargeTransaction();
+        navigateToInbox();
+
+        // Find all buttons and click the first "Mark as Read" button
+        List<WebElement> buttons = driver.findElements(By.tagName("button"));
+        for (WebElement button : buttons) {
+            if (button.getText().equals("Mark as Read")) {
+                button.click();
+                break;
+            }
+        }
+
+        // Allow time for the status to update
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
+
+        // Get the rows again after clicking the button
+        List<WebElement> rows = driver.findElements(By.tagName("tr"));
+        // Skip header row, check first message row
+        List<WebElement> cells = rows.get(1).findElements(By.tagName("td"));
+
+        // Verify the status changed to read
+        assertEquals("Read", cells.get(2).getText(),
+                "Message status should change to Read");
+    }
+
     @AfterEach
     void tearDown() {
         driver.quit();
