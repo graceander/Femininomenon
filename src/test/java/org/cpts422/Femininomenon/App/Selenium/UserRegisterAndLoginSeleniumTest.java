@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserRegisterSeleniumTest {
+public class UserRegisterAndLoginSeleniumTest {
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -25,7 +25,7 @@ public class UserRegisterSeleniumTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    public void quitDriver() {
         driver.quit();
 
     }
