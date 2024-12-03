@@ -199,6 +199,40 @@ public class InboxMessageSeleniumTest {
                 "Message status should change to Read");
     }
 
+    /**
+     * Tests inbox behavior with many messages
+     */
+    @Test
+    void testInboxWithManyMessages() {
+        loginToApplication();
+        // Create multiple large transactions to generate many messages
+        for (int i = 0; i < 5; i++) {
+            createLargeTransaction();
+        }
+        navigateToInbox();
+
+        // Verify all messages are present and accessible
+        List<WebElement> rows = driver.findElements(By.tagName("tr"));
+        assertTrue(rows.size() > 5, "Should have multiple messages");
+
+        // Try to mark last message as read
+        List<WebElement> buttons = rows.get(rows.size() - 1)
+                .findElements(By.tagName("button"));
+        for (WebElement button : buttons) {
+            if (button.getText().equals("Mark as Read")) {
+                button.click();
+                break;
+            }
+        }
+
+        // Verify last message was marked as read
+        rows = driver.findElements(By.tagName("tr"));
+        List<WebElement> lastRowCells = rows.get(rows.size() - 1)
+                .findElements(By.tagName("td"));
+        assertEquals("Read", lastRowCells.get(2).getText(),
+                "Last message should be marked as read");
+    }
+
     @AfterEach
     void tearDown() {
         driver.quit();
