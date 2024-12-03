@@ -3,8 +3,7 @@ package org.cpts422.Femininomenon.App.SystemTests;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import java.time.Duration;
 import java.util.List;
@@ -43,6 +42,77 @@ public class InboxMessageSeleniumTest {
             if (button.getText().equals("View Inbox")) {
                 button.click();
                 break;
+            }
+        }
+    }
+
+    /**
+     * Creates a large transaction that should trigger an inbox message.
+     */
+    void createLargeTransaction() {
+        // Find and click "Add Transaction" button
+        List<WebElement> mainButtons = driver.findElements(By.tagName("button"));
+        for (WebElement button : mainButtons) {
+            if (button.getText().equals("Add Transaction")) {
+                button.click();
+                break;
+            }
+        }
+
+        // Fill out transaction form with a large amount
+        WebElement amount = driver.findElement(By.id("amount"));
+        amount.sendKeys("5000"); // Large amount to trigger alert
+
+        WebElement category = driver.findElement(By.id("category"));
+        Select selectCategory = new Select(category);
+        selectCategory.selectByVisibleText("Groceries");
+
+        WebElement description = driver.findElement(By.id("description"));
+        description.sendKeys("Large grocery purchase");
+
+        WebElement type = driver.findElement(By.id("type"));
+        Select selectType = new Select(type);
+        selectType.selectByVisibleText("Expense");
+
+        WebElement account = driver.findElement(By.id("account"));
+        Select selectAccount = new Select(account);
+        selectAccount.selectByVisibleText("Checking");
+
+        // Submit the transaction
+        WebElement addButton = driver.findElement(By.tagName("button"));
+        addButton.click();
+    }
+
+    /**
+     * Tests that the expected messages appear after creating a large transaction.
+     */
+    @Test
+    void testInboxMessageExists() {
+        loginToApplication();
+        createLargeTransaction();
+        navigateToInbox();
+
+        // Get all rows from the table
+        List<WebElement> rows = driver.findElements(By.tagName("tr"));
+
+        // Skip header row
+        for (int i = 1; i < rows.size(); i++) {
+            WebElement row = rows.get(i);
+            // Get cells for this row
+            List<WebElement> cells = row.findElements(By.tagName("td"));
+            if (cells.size() > 0) {
+                String messageText = cells.get(0).getText(); // Message column
+                String status = cells.get(2).getText(); // Status column
+
+                if (i == 1) {
+                    assertEquals("Alert: You have expenses ($5000.00) but no income recorded this month.",
+                            messageText, "First message should indicate no income");
+                    assertEquals("Unread", status, "First message should be unread");
+                } else if (i == 2) {
+                    assertEquals("Alert: You have a large individual expense of $5000.00 with no income recorded this month.",
+                            messageText, "Second message should indicate large expense");
+                    assertEquals("Unread", status, "Second message should be unread");
+                }
             }
         }
     }
