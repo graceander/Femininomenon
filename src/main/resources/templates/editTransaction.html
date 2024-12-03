@@ -3,11 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Transaction Actions</title>
-  <script>
-    function showEditForm() {
-      document.getElementById('editForm').style.display = 'block';
-    }
-  </script>
 </head>
 <body>
 <h2>Meow meow with this Transaction?</h2>
@@ -39,15 +34,8 @@
   </tbody>
 </table>
 
-
 <table>
   <tr>
-    <td>
-      <form action="javascript:void(0);">
-        <button type="button" onclick="showEditForm()">Edit Transaction</button>
-      </form>
-    </td>
-    <td>&nbsp;</td>
     <td>
       <form action="/deleteTransaction" method="post">
         <input type="hidden" name="id" th:value="${transaction.id}">
@@ -60,7 +48,8 @@
   </tr>
 </table>
 
-<form id="editForm" action="/updateTransaction" method="post" style="display:none;">
+<!-- Edit Form displayed by default -->
+<form id="editForm" action="/updateTransaction" method="post">
   <input type="hidden" name="id" th:value="${transaction.id}">
   <input type="hidden" name="login" th:value="${user.login}">
 

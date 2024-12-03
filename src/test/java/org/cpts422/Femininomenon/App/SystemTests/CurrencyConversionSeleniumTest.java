@@ -1,0 +1,28 @@
+package org.cpts422.Femininomenon.App.SystemTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.*;
+import org.openqa.selenium.support.ui.*;
+
+import java.time.Duration;
+
+public class CurrencyConversionSeleniumTest {
+    WebDriver driver;
+    WebDriverWait wait;
+
+    @BeforeEach
+    void setUp() {
+        ChromeOptions options = new ChromeOptions();
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    @AfterEach
+    void tearDown() {
+        driver.quit();
+    }
+}
