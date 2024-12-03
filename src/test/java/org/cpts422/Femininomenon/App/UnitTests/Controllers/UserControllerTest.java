@@ -6,96 +6,87 @@ import org.cpts422.Femininomenon.App.Models.UserModel;
 import org.cpts422.Femininomenon.App.Service.UsersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.ui.Model;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
+@WebMvcTest(UserController.class)
 class UserControllerTest {
-    @Mock
-    private UsersService usersService;
-    @Mock
-    private Model model;
-    @InjectMocks
-    private UserController userController;
-    @BeforeEach
-    public void setUp()
-    {
-        MockitoAnnotations.openMocks(this);
-    }
 
+
+    // comment from last meeting
     //mock mvc extension to spring framework
+    @Autowired
+    private MockMvc mockMvc;
 
-    // this test function will test if it can get to the register page
+    @MockBean
+    private UsersService usersService;
+
+
+    // Test for the register page
     @Test
-    public void testRegisterPage() {
-        String viewName = userController.getRegisterPage(model);
-        verify(model, times(1)).addAttribute(eq("registerRequest"), any(UserModel.class));
-        assertEquals("register", viewName);
+    public void testRegisterPage() throws Exception {
+        mockMvc.perform(get("/register")).andExpect(status().isOk());
     }
 
-
-    // this test will check if it can register a new user.
+    // Test for successful user registration
     @Test
-    public void testRegisterCorrect() {
+    public void testRegisterCorrect() throws Exception {
         UserModel mockUser = new UserModel();
         mockUser.setFirstName("Matthew");
         mockUser.setLastName("Pham");
         mockUser.setLogin("hello123");
         mockUser.setPassword("password");
         mockUser.setEmail("matthew@gmail.com");
+
         when(usersService.registerUser("Matthew", "Pham", "hello123", "password", "matthew@gmail.com")).thenReturn(mockUser);
-        String result = userController.register(mockUser);
-        assertEquals("redirect:/", result);
+
+        mockMvc.perform(post("/register").param("firstName", "Matthew").param("lastName", "Pham").param("login", "hello123").param("password", "password").param("email", "matthew@gmail.com")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/"));
     }
 
+    // Test for failed user registration
+    @Test
+    public void testRegisterFalse() throws Exception {
+        when(usersService.registerUser(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(null);
 
-    // this will test the error handling of the register page
-    @Test
-    public void testRegisterFalse() {
-        UserModel mockUser = new UserModel();
-        mockUser.setFirstName("Matthew");
-        mockUser.setLastName("Pham");
-        mockUser.setLogin("hello");
-        mockUser.setPassword("password");
-        mockUser.setEmail("matthew@gmail.com");
-        when(usersService.registerUser("Matthew", "Pham", "hello123", "password", "matthew@gmail.com")).thenReturn(null);
-        String result = userController.register(mockUser);
-        assertEquals("error", result);
-    }
-    // this will test the login page
-    @Test
-    public void testIndexPage() {
-        String viewName = userController.index(model);
-        verify(model, times(1)).addAttribute(eq("loginRequest"), any(UserModel.class));
-        assertEquals("index", viewName);
+        mockMvc.perform(post("/register")
+                .param("firstName", "Matthew")
+                .param("lastName", "Pham")
+                .param("login", "hello")
+                .param("password", "password")
+                .param("email", "matthew@gmail.com")).andExpect(status().isOk());
+
     }
 
-    
-    // this will test the login if it's successful
+    // Test for the login page
     @Test
-    public void testLoginSuccessful() {
+    public void testIndexPage() throws Exception {
+        mockMvc.perform(get("/")).andExpect(status().isOk());
+    }
+
+    // Test for successful login
+    @Test
+    public void testLoginSuccessful() throws Exception {
         UserModel mockUser = new UserModel();
         mockUser.setLogin("Matt");
         mockUser.setPassword("password");
         when(usersService.authenticateUser("Matt", "password")).thenReturn(mockUser);
-        String result = userController.login(mockUser);
-        assertEquals("redirect:/home?login=Matt", result);
+        mockMvc.perform(post("/login").param("login", "Matt")
+                        .param("password", "password"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/home?login=Matt"));
     }
-    // this will test if the login failed like username or password wrong
+
+    // Test for failed login
     @Test
-    public void testLoginFailed() {
-        UserModel mockUser = new UserModel();
-        mockUser.setLogin("Matt");
-        mockUser.setPassword("wrongpassword");
-        when(usersService.authenticateUser("Matt", "password")).thenReturn(null);
-        String result = userController.login(mockUser);
-        assertEquals("error", result);
+    public void testLoginFailed() throws Exception {
+        when(usersService.authenticateUser("Matt", "wrongpassword")).thenReturn(null);
+        mockMvc.perform(post("/login").param("login", "Matt")
+                .param("password", "wrongpassword")).andExpect(status().isOk()).andExpect(view().name("error"));
     }
-
-
 }
-
