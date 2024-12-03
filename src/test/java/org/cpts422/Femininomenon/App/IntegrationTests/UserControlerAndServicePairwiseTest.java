@@ -28,7 +28,7 @@ public class UserControlerAndServicePairwiseTest {
 
 
     @Test
-    public void testRegisterUser_ValidInputs() {
+    public void testRegisterUserValidInputs() {
         userModel.setFirstName("Matthew");
         userModel.setLastName("Pham");
         userModel.setEmail("MattP@gmail.com");
@@ -41,7 +41,7 @@ public class UserControlerAndServicePairwiseTest {
     }
 
     @Test
-    public void testRegisterUser_InvalidFirstName() {
+    public void testRegisterUserInvalidFirstName() {
         userModel.setFirstName("");
         userModel.setLastName("Pham");
         userModel.setEmail("MattP@gmail.com");
@@ -53,7 +53,7 @@ public class UserControlerAndServicePairwiseTest {
     }
 
     @Test
-    public void testRegisterUser_InvalidEmail() {
+    public void testRegisterUserInvalidEmail() {
         userModel.setFirstName("Matthew");
         userModel.setLastName("Pham");
         userModel.setEmail("@@@@@@.com");
@@ -64,7 +64,7 @@ public class UserControlerAndServicePairwiseTest {
         assertEquals("error", result);
     }
     @Test
-    public void testRegisterUser_InvalidPassword() {
+    public void testRegisterUserInvalidPassword() {
 
         userModel.setFirstName("Matthew");
         userModel.setLastName("Pham");
@@ -78,7 +78,7 @@ public class UserControlerAndServicePairwiseTest {
 
 
     @Test
-    public void testRegisterUser_InvalidLogin() {
+    public void testRegisterUserInvalidLogin() {
         userModel.setFirstName("Matthew");
         userModel.setLastName("Pham");
         userModel.setEmail("MattP@gmail.com");
